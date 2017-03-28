@@ -15,10 +15,13 @@
 #include "sphere.h"
 #include "shader.h"
 #include "texture.h"
+#include "object.h"
+#include "Camera.h"
 // Include GLM
 #include <glm\glm.hpp>
 #include <glm\gtc\matrix_transform.hpp>
 #include <glm\gtc\type_ptr.hpp>
+
 using glm::vec3;
 using glm::mat4;
 
@@ -53,6 +56,7 @@ protected:
 	void mousePressEvent(QMouseEvent *e) Q_DECL_OVERRIDE;
 	void mouseMoveEvent(QMouseEvent *e) Q_DECL_OVERRIDE;
 	void mouseReleaseEvent(QMouseEvent *e) Q_DECL_OVERRIDE;
+	void wheelEvent(QWheelEvent* e) Q_DECL_OVERRIDE;
 
 private:
 	void setupVertexAttribs();
@@ -70,10 +74,13 @@ private:
 	int m_mvMatrixLoc;
 	int m_normalMatrixLoc;
 
-
-	//QOpenGLTexture* m_texture;
+	Camera camera;
+	
 	Texture* texture;
 	Shader* sh;
+
+	//przykladowy object
+	Object* obj;
 
 	QVector3D m_cameraVelocity;
 

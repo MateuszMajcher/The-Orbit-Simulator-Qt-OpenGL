@@ -79,6 +79,7 @@ GLWidget::GLWidget(QWidget *parent)
 	: QOpenGLWidget(parent)
 	, m_program(0)
 	, m_geometry(0)
+	, camera(glm::vec3(0.0f, 0.0f, 3.0f))
 {
 	QSurfaceFormat format = QSurfaceFormat::defaultFormat();
 	format.setSamples(16);
@@ -88,7 +89,7 @@ GLWidget::GLWidget(QWidget *parent)
 	sh = new Shader(vertex, fragment);
 	texture = new Texture(sh);
 	m_timer = new QTimer(this);
-
+	
 }
 
 GLWidget::~GLWidget()
@@ -163,6 +164,8 @@ void GLWidget::initializeGL()
 	m_texture->setMinificationFilter(QOpenGLTexture::Nearest);
 	m_texture->setMagnificationFilter(QOpenGLTexture::Linear);*/
 
+	obj = new Object("mars", m_geometry, texture);
+
 }
 
 void GLWidget::setupVertexAttribs()
@@ -185,7 +188,7 @@ void GLWidget::paintGL()
 	glm::mat4 view;
 	glm::mat4 projection;
 	model = glm::rotate(model, 1.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-	view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+	view = camera.GetViewMatrix();
 	projection = glm::perspective(45.0f, (GLfloat)this->width() / (GLfloat)this->height(), 0.1f, 100.0f);
 	// Get their uniform location
 	/*GLint modelLoc = glGetUniformLocation(ourShader.program, "model");
@@ -204,12 +207,12 @@ void GLWidget::paintGL()
 	sh->getProgram()->setUniformValue("model", QMatrix4x4(glm::value_ptr(model)).transposed());
 	sh->getProgram()->setUniformValue("view", QMatrix4x4(glm::value_ptr(view)).transposed());
 	sh->getProgram()->setUniformValue("projection", QMatrix4x4(glm::value_ptr(projection)).transposed());
-	texture->bind();
+	//texture->bind();
 	// Texture unit 0
 	sh->getProgram()->setUniformValue("texture", 0);
 
 	//narysowanie danych zawartych w tablicach wierzcho³ków dla obiektu
-	m_geometry->draw(sh->getProgram());
+	obj->Draw(sh->getProgram());
 
 	// wy³¹czenie shadera
 	sh->getProgram()->release();
@@ -235,37 +238,25 @@ void GLWidget::mouseMoveEvent(QMouseEvent *e)
 {
 	if (e->MouseButtonPress) {
 	
-	GLfloat xoffset = (GLfloat)e->x() - lastX;
-	GLfloat yoffset = lastY - (GLfloat)e->y(); // Reversed since y-coordinates go from bottom to left
-	lastX = (GLfloat)e->x();
-	lastY = (GLfloat)e->y();
-	qDebug() << lastX;
-	GLfloat sensitivity = 0.05;	// Change this value to your liking
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-
-	yaw += xoffset;
-	pitch += yoffset;
-
-	// Make sure that when pitch is out of bounds, screen doesn't get flipped
-	if (pitch > 89.0f)
-		pitch = 89.0f;
-	if (pitch < -89.0f)
-		pitch = -89.0f;
-
-	glm::vec3 front;
-	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	front.y = sin(glm::radians(pitch));
-	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	cameraFront = glm::normalize(front);
+		GLfloat xoffset = (GLfloat)e->x() - lastX;
+		GLfloat yoffset = lastY - (GLfloat)e->y(); // Reversed since y-coordinates go from bottom to left
+		lastX = (GLfloat)e->x();
+		lastY = (GLfloat)e->y();
+		camera.ProcessMouseMovement(xoffset, yoffset);
 	}
-
-
 	update();
 }
 
 void GLWidget::mouseReleaseEvent(QMouseEvent *e)
 {
 	e = e;
+}
+
+void GLWidget::wheelEvent(QWheelEvent* e) {
+	QPoint numPixels = e->pixelDelta();
+	QPoint numDegrees = e->angleDelta() / 8;
+	QPoint numSteps = numDegrees / 15;
+	qDebug() << numSteps;
+
 }
 
