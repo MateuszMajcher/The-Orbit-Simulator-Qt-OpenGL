@@ -14,6 +14,7 @@ GLfloat yaw = -90.0f;	// Yaw is initialized to -90.0 degrees since a yaw of 0.0 
 GLfloat pitch = 0.0f;
 GLfloat lastX = WIDTH / 2.0;
 GLfloat lastY = HEIGHT / 2.0;
+GLfloat rot = 0;
 
 static const char *vertexShaderSourceCore = R"(
     #version 120
@@ -88,7 +89,10 @@ GLWidget::GLWidget(QWidget *parent)
 	this->setFormat(format);
 	sh = new Shader(vertex, fragment);
 	texture = new Texture(sh);
+
 	m_timer = new QTimer(this);
+	connect(m_timer, SIGNAL(timeout()), this, SLOT(updaterot()));
+	m_timer->start(20);
 	
 }
 
@@ -128,7 +132,10 @@ void GLWidget::cleanup()
 	doneCurrent();
 }
 
-
+void GLWidget::updaterot() {
+	rot+=0.1;
+	update();
+}
 
 
 void GLWidget::initializeGL()
@@ -165,7 +172,8 @@ void GLWidget::initializeGL()
 	m_texture->setMagnificationFilter(QOpenGLTexture::Linear);*/
 
 	obj = new Object("mars", m_geometry, texture);
-
+	pos = new Position();
+	
 }
 
 void GLWidget::setupVertexAttribs()
@@ -187,9 +195,9 @@ void GLWidget::paintGL()
 	glm::mat4 model;
 	glm::mat4 view;
 	glm::mat4 projection;
-	model = glm::rotate(model, 1.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+	model = glm::rotate(model, rot, glm::vec3(1.0f, 1.0f, 0.0f));
 	view = camera.GetViewMatrix();
-	projection = glm::perspective(45.0f, (GLfloat)this->width() / (GLfloat)this->height(), 0.1f, 100.0f);
+	projection = glm::perspective(camera.Zoom, (GLfloat)this->width() / (GLfloat)this->height(), 0.1f, 100.0f);
 	// Get their uniform location
 	/*GLint modelLoc = glGetUniformLocation(ourShader.program, "model");
 	GLint viewLoc = glGetUniformLocation(ourShader.program, "view");
@@ -257,6 +265,6 @@ void GLWidget::wheelEvent(QWheelEvent* e) {
 	QPoint numDegrees = e->angleDelta() / 8;
 	QPoint numSteps = numDegrees / 15;
 	qDebug() << numSteps;
-
+	camera.ProcessMouseScroll(numSteps.y());
 }
 

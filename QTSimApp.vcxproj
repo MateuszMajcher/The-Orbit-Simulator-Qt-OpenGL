@@ -169,6 +169,7 @@
     <ClCompile Include="mainwindow.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="object.cpp" />
+    <ClCompile Include="Position.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="Simulation.cpp" />
     <ClCompile Include="texture.cpp" />
@@ -221,6 +222,7 @@
     <ClInclude Include="mesh.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="planet.h" />
+    <ClInclude Include="Position.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="Simulation.h" />
     <ClInclude Include="texture.h" />

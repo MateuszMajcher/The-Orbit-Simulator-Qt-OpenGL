@@ -17,6 +17,7 @@
 #include "texture.h"
 #include "object.h"
 #include "Camera.h"
+#include "Position.h"
 // Include GLM
 #include <glm\glm.hpp>
 #include <glm\gtc\matrix_transform.hpp>
@@ -43,6 +44,7 @@ public:
 
 	public slots:
 	void cleanup();
+	void updaterot();
 
 signals:
 	void xRotationChanged(int angle);
@@ -81,9 +83,8 @@ private:
 
 	//przykladowy object
 	Object* obj;
-
 	QVector3D m_cameraVelocity;
-
+	Position* pos;
 
 	int m_lightPosLoc;
 	//mouse

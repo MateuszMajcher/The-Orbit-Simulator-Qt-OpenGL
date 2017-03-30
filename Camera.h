@@ -115,11 +115,12 @@ public:
 	void ProcessMouseScroll(GLfloat yoffset)
 	{
 		if (this->Zoom >= 1.0f && this->Zoom <= 45.0f)
-			this->Zoom -= yoffset;
+			this->Zoom -= yoffset/10;
 		if (this->Zoom <= 1.0f)
 			this->Zoom = 1.0f;
 		if (this->Zoom >= 45.0f)
 			this->Zoom = 45.0f;
+		qDebug() << this->Zoom;
 	}
 
 private:
