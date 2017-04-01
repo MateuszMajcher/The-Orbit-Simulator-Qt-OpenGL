@@ -14,7 +14,7 @@ GLfloat yaw = -90.0f;	// Yaw is initialized to -90.0 degrees since a yaw of 0.0 
 GLfloat pitch = 0.0f;
 GLfloat lastX = WIDTH / 2.0;
 GLfloat lastY = HEIGHT / 2.0;
-GLfloat rot = 0;
+GLfloat rotx = 0;
 
 static const char *vertexShaderSourceCore = R"(
     #version 120
@@ -133,7 +133,7 @@ void GLWidget::cleanup()
 }
 
 void GLWidget::updaterot() {
-	rot+=0.1;
+	rotx+=0.1;
 	update();
 }
 
@@ -172,7 +172,7 @@ void GLWidget::initializeGL()
 	m_texture->setMagnificationFilter(QOpenGLTexture::Linear);*/
 
 	obj = new Object("mars", m_geometry, texture);
-	pos = new Position();
+	Position pos;
 	
 }
 
@@ -195,9 +195,20 @@ void GLWidget::paintGL()
 	glm::mat4 model;
 	glm::mat4 view;
 	glm::mat4 projection;
-	model = glm::rotate(model, rot, glm::vec3(1.0f, 1.0f, 0.0f));
+	//model = glm::rotate(model, rot, glm::vec3(1.0f, 1.0f, 0.0f));
+
+
+	//glm::quat &rot = glm::angleAxis(glm::radians(rotx), glm::vec3(1.f, 0.f, 0.f));
+	pos.setAngle(rotx, glm::vec3(1.f, 0.f, 0.f));
+	//pos->SetRot(rotx);
+	glm::dvec3 &posx = glm::dvec3(rotx/50, 0.f, 0.f);
+	pos.setPosition(posx);
+	glm::dvec3 &scalex = glm::dvec3(0.5, 1.f, 0.2f);
+	pos.SetScale(scalex);
+
+	/*model = pos->GetModel();
 	view = camera.GetViewMatrix();
-	projection = glm::perspective(camera.Zoom, (GLfloat)this->width() / (GLfloat)this->height(), 0.1f, 100.0f);
+	projection = camera.GetProjection();*/
 	// Get their uniform location
 	/*GLint modelLoc = glGetUniformLocation(ourShader.program, "model");
 	GLint viewLoc = glGetUniformLocation(ourShader.program, "view");
@@ -211,16 +222,16 @@ void GLWidget::paintGL()
 	m_vao.bind();
 
 	QOpenGLVertexArrayObject::Binder vaoBinder(&m_vao);
-	sh->Bind();
+	/*sh->Bind();
 	sh->getProgram()->setUniformValue("model", QMatrix4x4(glm::value_ptr(model)).transposed());
 	sh->getProgram()->setUniformValue("view", QMatrix4x4(glm::value_ptr(view)).transposed());
 	sh->getProgram()->setUniformValue("projection", QMatrix4x4(glm::value_ptr(projection)).transposed());
-	//texture->bind();
+	texture->bind();
 	// Texture unit 0
-	sh->getProgram()->setUniformValue("texture", 0);
-
+	sh->getProgram()->setUniformValue("texture", 0);*/
+	obj->SetPosition(pos);
 	//narysowanie danych zawartych w tablicach wierzcho³ków dla obiektu
-	obj->Draw(sh->getProgram());
+	obj->Draw(sh->getProgram(), camera);
 
 	// wy³¹czenie shadera
 	sh->getProgram()->release();
@@ -228,8 +239,7 @@ void GLWidget::paintGL()
 
 void GLWidget::resizeGL(int w, int h)
 {
-	m_proj.setToIdentity();
-	m_proj.perspective(45.0f, GLfloat(w) / h, 0.01f, 100.0f);
+	camera.setSize(w, h);
 }
 
 void GLWidget::mousePressEvent(QMouseEvent *e)

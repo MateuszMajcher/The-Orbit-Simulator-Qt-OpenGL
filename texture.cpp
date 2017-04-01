@@ -15,6 +15,17 @@ void Texture::addTexture(const QString& path) {
 }
 
 void Texture::bind() {
+	if (m_shader != nullptr) {
+		m_shader->Bind();
+		//m_shader->SetColor(m_color);
+		//m_shader->SetEmission(m_emission);
+	}
 	m_texture->bind();
+}
+
+void Texture::Update(Position& position, Camera& camera) {
+	if (m_shader != NULL) {
+		m_shader->update(position, camera);
+	}
 }
 

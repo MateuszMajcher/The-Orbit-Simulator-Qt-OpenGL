@@ -32,6 +32,28 @@ void Shader::setup() {
 	qDebug() << m_uniforms[MODEL_MATRIX_U];
 }
 
+void Shader::update(Position& position, Camera& camera) {
+	qDebug() << "update";
+
+	glm::mat4 model = position.GetModel();
+	glm::mat4 view = camera.GetViewMatrix();
+	glm::mat4 projection = camera.GetProjection();
+
+	m_program->setUniformValue("model", QMatrix4x4(glm::value_ptr(model)).transposed());
+	m_program->setUniformValue("view", QMatrix4x4(glm::value_ptr(view)).transposed());
+	m_program->setUniformValue("projection", QMatrix4x4(glm::value_ptr(projection)).transposed());
+
+	m_program->setUniformValue("texture", 0);
+}
+
+void Shader::SetColor(glm::vec4 color) {
+	glUniform4fv(m_uniforms[COLOR_U], 1, glm::value_ptr(color));
+}
+
+void Shader::SetEmission(float emission) {
+	glUniform1f(m_uniforms[EMISSION_U], emission);
+}
+
 
 void Shader::Bind() {
 	m_program->bind();

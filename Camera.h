@@ -3,7 +3,6 @@
 
 // Std. Includes
 #include <vector>
-
 // Include GLM
 #include <glm\glm.hpp>
 #include <glm\gtc\matrix_transform.hpp>
@@ -53,6 +52,8 @@ public:
 		this->Yaw = yaw;
 		this->Pitch = pitch;
 		this->updateCameraVectors();
+		w = 800;
+		h = 600;
 	}
 	// Constructor with scalar values
 	Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
@@ -72,7 +73,7 @@ public:
 
 	inline glm::mat4 GetProjection()
 	{
-		return glm::perspective(this->Zoom, (float)800 / (float)600, 0.1f, 1000.0f);
+		return glm::perspective(this->Zoom, w / h, 0.1f, 1000.0f);
 	}
 
 	// Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
@@ -123,6 +124,13 @@ public:
 		qDebug() << this->Zoom;
 	}
 
+
+	//ustawienie rozmiaru okna 
+	void setSize(GLfloat _w, GLfloat _h) {
+		w = _w;
+		h = _h;
+	}
+
 private:
 	// Calculates the front vector from the Camera's (updated) Eular Angles
 	void updateCameraVectors()
@@ -137,4 +145,7 @@ private:
 		this->Right = glm::normalize(glm::cross(this->Front, this->WorldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
 		this->Up = glm::normalize(glm::cross(this->Right, this->Front));
 	}
+
+
+	GLfloat w, h;
 };

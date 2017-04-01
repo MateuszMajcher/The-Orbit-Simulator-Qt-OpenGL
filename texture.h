@@ -3,7 +3,8 @@
 #define TEXTURE_H
 #include <QOpenGLTexture>
 #include "shader.h"
-
+#include "Position.h"
+#include "Camera.h"
 #include <glm\glm.hpp>
 #include <glm\gtc\matrix_transform.hpp>
 #include <glm\gtc\type_ptr.hpp>
@@ -17,6 +18,7 @@ public:
 	~Texture();
 	void addTexture(const QString& path);
 	void bind();
+	void Update(Position& position, Camera& cam);
 
 	void SetColor(glm::vec4 color) { m_color = color; }
 	glm::vec4& GetColor() { return m_color; }

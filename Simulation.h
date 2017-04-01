@@ -2,6 +2,7 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 #include "object.h"
+#include "Camera.h"
 #include <list>
 
 
@@ -11,7 +12,7 @@ public:
 	~Simulation();
 	static Simulation* CurrentSim;
 	static void addObject(Object* obj);
-	void drawScene(QOpenGLShaderProgram *program);
+	void drawScene(QOpenGLShaderProgram *program, Camera& camera);
 
 private:
 	std::list<Object*> objects;

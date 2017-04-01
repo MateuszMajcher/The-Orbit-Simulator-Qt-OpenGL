@@ -84,7 +84,7 @@ private:
 	//przykladowy object
 	Object* obj;
 	QVector3D m_cameraVelocity;
-	Position* pos;
+	Position pos;
 
 	int m_lightPosLoc;
 	//mouse

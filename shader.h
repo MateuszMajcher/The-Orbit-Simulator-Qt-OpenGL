@@ -3,6 +3,13 @@
 #define SHADER_H
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
+#include "Position.h"
+#include "Camera.h"
+// Include GLM
+#include <glm\glm.hpp>
+#include <glm\gtc\matrix_transform.hpp>
+#include <glm\gtc\type_ptr.hpp>
+
 #define PROGRAM_VERTEX_ATTRIBUTE 0
 #define PROGRAM_TEXCOORD_ATTRIBUTE 1
 #define PROGRAM_NORMAL_ATTRIBUTE 2
@@ -17,6 +24,9 @@ public:
 	void addVertex(const char* vertex);
 	void addFragment(const char* fragment);
 	void setup();
+	void update(Position& position, Camera& camera);
+	void SetColor(glm::vec4 color);
+	void SetEmission(float emission);
 private:
 	QOpenGLShaderProgram *m_program;
 	GLuint m_uniforms[5];

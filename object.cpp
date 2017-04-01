@@ -10,8 +10,9 @@ Object::Object(const QString& name, Mesh* mesh, Texture* tex) {
 	this->tex = tex;
 }
 
-void Object::Draw(QOpenGLShaderProgram *program) {
+void Object::Draw(QOpenGLShaderProgram *program, Camera camera) {
 	tex->bind();
+	tex->Update(pos, camera);
 	mesh->draw(program);
 }
 
