@@ -169,6 +169,7 @@
     <ClCompile Include="mainwindow.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="object.cpp" />
+    <ClCompile Include="planet.cpp" />
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="Simulation.cpp" />

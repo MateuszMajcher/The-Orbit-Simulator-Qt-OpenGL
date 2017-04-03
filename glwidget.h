@@ -18,6 +18,7 @@
 #include "object.h"
 #include "Camera.h"
 #include "Position.h"
+#include "planet.h"
 // Include GLM
 #include <glm\glm.hpp>
 #include <glm\gtc\matrix_transform.hpp>
@@ -85,6 +86,7 @@ private:
 	Object* obj;
 	QVector3D m_cameraVelocity;
 	Position pos;
+	Planet* planet;
 
 	int m_lightPosLoc;
 	//mouse

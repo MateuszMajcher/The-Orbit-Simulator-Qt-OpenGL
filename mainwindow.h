@@ -14,6 +14,7 @@ class QDockWidget;
 class QMenu;
 class QTextEdit;
 class QListWidget;
+class QTableWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -48,7 +49,7 @@ private:
 
 	QMenu *viewMenu;
 
-	QListWidget *planetList;
+	QTableWidget *planetList;
 
 };
 

@@ -16,6 +16,8 @@ public:
 	void SetPosition(Position& position) { pos = position; }
 	Texture* GetTexture() { return tex; }
 	void SetTexture(Texture* material) { tex = material; }
+	QString& getName() { return name; }
+
 
 private:
 	Mesh* mesh;

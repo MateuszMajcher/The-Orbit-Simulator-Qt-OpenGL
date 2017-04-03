@@ -128,7 +128,6 @@ void GLWidget::cleanup()
 	delete m_program;
 	delete sh;
 	m_program = 0;
-
 	doneCurrent();
 }
 
@@ -146,7 +145,7 @@ void GLWidget::initializeGL()
 	initializeOpenGLFunctions();
 	glClearColor(0, 0, 0, m_transparent ? 0 : 1);
 	
-	m_geometry = new Sphere();
+	//m_geometry = new Sphere();
 	sh->addVertex(vertex);
 	sh->addFragment(fragment);
 	sh->setup();
@@ -166,27 +165,18 @@ void GLWidget::initializeGL()
 	QOpenGLVertexArrayObject::Binder vaoBinder(&m_vao);
 
 	//texture->addTexture("texture/texture_sun.jpg");
-	texture->addTexture("texture/metal.png");
+	///texture->addTexture("texture/metal.png");
 	/*m_texture = new QOpenGLTexture(QImage("texture/texture_sun.jpg").mirrored(true, true));
 	m_texture->setMinificationFilter(QOpenGLTexture::Nearest);
 	m_texture->setMagnificationFilter(QOpenGLTexture::Linear);*/
 
-	obj = new Object("mars", m_geometry, texture);
+	//obj = new Object("mars", m_geometry, texture);
 	Position pos;
-	
-}
-
-void GLWidget::setupVertexAttribs()
-{
-
-
+	planet = new Planet("Sun", 10E10, glm::dvec3(0, 0, 0), 5, 1, 512, sh, "texture/texture_sun.jpg");
 }
 
 void GLWidget::paintGL()
 {
-
-	m_proj.setToIdentity();
-	m_proj.perspective(45.0f, GLfloat(this->width()) / this->height(), 0.01f, 100.0f);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
@@ -195,43 +185,23 @@ void GLWidget::paintGL()
 	glm::mat4 model;
 	glm::mat4 view;
 	glm::mat4 projection;
-	//model = glm::rotate(model, rot, glm::vec3(1.0f, 1.0f, 0.0f));
-
 
 	//glm::quat &rot = glm::angleAxis(glm::radians(rotx), glm::vec3(1.f, 0.f, 0.f));
 	pos.setAngle(rotx, glm::vec3(1.f, 0.f, 0.f));
 	//pos->SetRot(rotx);
 	glm::dvec3 &posx = glm::dvec3(rotx/50, 0.f, 0.f);
 	pos.setPosition(posx);
-	glm::dvec3 &scalex = glm::dvec3(0.5, 1.f, 0.2f);
+	glm::dvec3 &scalex = glm::dvec3(1, 1.f, 1.f);
 	pos.SetScale(scalex);
 
-	/*model = pos->GetModel();
-	view = camera.GetViewMatrix();
-	projection = camera.GetProjection();*/
-	// Get their uniform location
-	/*GLint modelLoc = glGetUniformLocation(ourShader.program, "model");
-	GLint viewLoc = glGetUniformLocation(ourShader.program, "view");
-	GLint projLoc = glGetUniformLocation(ourShader.program, "projection");
-	// Pass them to the shaders
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-	// Note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));*/
-
 	m_vao.bind();
-
 	QOpenGLVertexArrayObject::Binder vaoBinder(&m_vao);
-	/*sh->Bind();
-	sh->getProgram()->setUniformValue("model", QMatrix4x4(glm::value_ptr(model)).transposed());
-	sh->getProgram()->setUniformValue("view", QMatrix4x4(glm::value_ptr(view)).transposed());
-	sh->getProgram()->setUniformValue("projection", QMatrix4x4(glm::value_ptr(projection)).transposed());
-	texture->bind();
-	// Texture unit 0
-	sh->getProgram()->setUniformValue("texture", 0);*/
-	obj->SetPosition(pos);
+	
+	//obj->SetPosition(pos);
+	planet->GetObject()->SetPosition(pos);
 	//narysowanie danych zawartych w tablicach wierzcho³ków dla obiektu
-	obj->Draw(sh->getProgram(), camera);
+	//obj->Draw(sh->getProgram(), camera);
+	planet->GetObject()->Draw(sh->getProgram(), camera);
 
 	// wy³¹czenie shadera
 	sh->getProgram()->release();

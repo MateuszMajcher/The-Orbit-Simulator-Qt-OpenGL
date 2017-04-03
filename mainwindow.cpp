@@ -14,6 +14,7 @@
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QSize>
+#include <QTableWidget>
 
 MainWindow::MainWindow()
 	:glWidget(new GLWidget)
@@ -96,14 +97,13 @@ void MainWindow::createDock() {
 	dock->setAllowedAreas(Qt::BottomDockWidgetArea);
 	dock->setMaximumWidth(400);
 	dock->setMaximumHeight(150);
-	planetList = new QListWidget(dock);
-	planetList->addItems(QStringList()
-		<< "John Doe, Harmony Enterprises, 12 Lakeside, Ambleton"
-		<< "Jane Doe, Memorabilia, 23 Watersedge, Beaton"
-		<< "Tammy Shea, Tiblanka, 38 Sea Views, Carlton"
-		<< "Tim Sheen, Caraba Gifts, 48 Ocean Way, Deal"
-		<< "Sol Harvey, Chicos Coffee, 53 New Springs, Eccleston"
-		<< "Sally Hobart, Tiroli Tea, 67 Long River, Fedula");
+	planetList = new QTableWidget(1, 2, this);
+	QTableWidgetItem *planetName = new QTableWidgetItem(tr("nazwa"));
+	QTableWidgetItem *sizeName = new QTableWidgetItem(tr("rozmiar"));
+
+	planetList->setHorizontalHeaderItem(0, planetName);
+	planetList->setHorizontalHeaderItem(1, sizeName);
+
 	dock->setWidget(planetList);
 	addDockWidget(Qt::BottomDockWidgetArea, dock);
 	//viewMenu->addAction(dock->toggleViewAction());
