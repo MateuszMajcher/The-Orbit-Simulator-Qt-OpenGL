@@ -19,6 +19,9 @@
 #include "Camera.h"
 #include "Position.h"
 #include "planet.h"
+#include "Simulation.h"
+#include "Solarsystem.h"
+
 // Include GLM
 #include <glm\glm.hpp>
 #include <glm\gtc\matrix_transform.hpp>
@@ -46,7 +49,7 @@ public:
 	public slots:
 	void cleanup();
 	void updaterot();
-
+	//void drawScene(QOpenGLShaderProgram *program, Simulation& scene, Camera camera);
 signals:
 	void xRotationChanged(int angle);
 	void yRotationChanged(int angle);
@@ -81,6 +84,7 @@ private:
 	
 	Texture* texture;
 	Shader* sh;
+	SolarSystem* mainScene;
 
 	//przykladowy object
 	Object* obj;

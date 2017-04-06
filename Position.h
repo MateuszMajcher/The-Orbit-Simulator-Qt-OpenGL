@@ -17,7 +17,7 @@ class Position {
 public:
 	Position(const dvec3& pos = dvec3(), const dquat& rot = dquat(), const dvec3& scale = dvec3(1.0, 1.0, 1.0))
 	: m_pos(pos), m_rotate(rot), m_scale(scale) {
-		qDebug() << pos.x;
+		//qDebug() << pos.x;
 	}
 
 	~Position();

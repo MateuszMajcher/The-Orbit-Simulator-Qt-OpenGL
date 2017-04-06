@@ -10,6 +10,7 @@
 
 
 class VertexData;
+
 class Sphere : public Mesh
 {
 public:

@@ -14,13 +14,11 @@ Sphere::Sphere() :
 {
 	initializeOpenGLFunctions();
 
-	
-
 	// Generate 2 VBOs
 	arrayBuf.create();
 	indexBuf.create();
 
-	// Initializes cube geometry and transfers it to VBOs
+	// 
 	init();
 
 	//color = QVector4D(1, 0, 0, 1);
@@ -75,6 +73,12 @@ void Sphere::init()
 		}
 	}
 
+	// Create a vertex array object. In OpenGL ES 2.0 and OpenGL 2.x
+	// implementations this is optional and support may not be present
+	// at all. Nonetheless the below code works in all cases and makes
+	// sure there is a VAO when one is needed.
+	m_vao.create();
+	QOpenGLVertexArrayObject::Binder vaoBinder(&m_vao);
 
 	//Obiekty bufora wierzcho³ków
 	//Utworzenie obiektu tablic wierzcho³ków
@@ -89,9 +93,9 @@ void Sphere::init()
 
 void Sphere::draw(QOpenGLShaderProgram *program)
 {
-	// w³¹czenie obiektu tablic wierzcho³ków
-	arrayBuf.bind();
-	indexBuf.bind();
+	
+	QOpenGLVertexArrayObject::Binder vaoBinder(&m_vao);
+
 	//w³¹czenie shadera
 	program->bind();
 

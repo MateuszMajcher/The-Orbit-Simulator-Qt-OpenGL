@@ -22,7 +22,7 @@ MainWindow::MainWindow()
     setCentralWidget(glWidget);
 	createActions();
 	createDock();
-	
+	//setMinimumSize(200, 200);
 }
 
 MainWindow::~MainWindow()

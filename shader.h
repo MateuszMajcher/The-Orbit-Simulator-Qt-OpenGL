@@ -14,6 +14,8 @@
 #define PROGRAM_TEXCOORD_ATTRIBUTE 1
 #define PROGRAM_NORMAL_ATTRIBUTE 2
 
+class Camera;
+class Position;
 
 class Shader : protected QOpenGLFunctions {
 public:

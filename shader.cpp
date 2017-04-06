@@ -29,11 +29,10 @@ void Shader::setup() {
 	m_uniforms[COLOR_U] = m_program->uniformLocation("color");
 	m_uniforms[EMISSION_U] = m_program->uniformLocation("emmision");
 
-	qDebug() << m_uniforms[MODEL_MATRIX_U];
+	//qDebug() << m_uniforms[MODEL_MATRIX_U];
 }
 
 void Shader::update(Position& position, Camera& camera) {
-	qDebug() << "update";
 
 	glm::mat4 model = position.GetModel();
 	glm::mat4 view = camera.GetViewMatrix();

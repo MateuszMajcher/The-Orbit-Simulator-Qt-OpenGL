@@ -43,38 +43,7 @@ static const char *fragmentShaderSourceCore = R"(
     }
 )";
 
-static const char *vertex = R"(
-   #version 330 core
 
-attribute vec3 vertex;
-attribute vec2 in_texcoord;
-varying vec2 TexCoord;
-
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
-
-void main()
-{
-    gl_Position = projection * view * model * vec4(vertex, 1.0f);
-    TexCoord = vec2(in_texcoord.x, 1.0 - in_texcoord.y);
-}
-)";
-
-static const char *fragment = R"(
-   #version 330 core
-
-		 varying  vec2 TexCoord;
-
-		out vec4 color;
-
-		uniform sampler2D ourTexture1;
-
-		void main()
-{
-    color = texture(ourTexture1, TexCoord);
-}
-)";
 
 GLWidget::GLWidget(QWidget *parent)
 	: QOpenGLWidget(parent)
@@ -89,7 +58,6 @@ GLWidget::GLWidget(QWidget *parent)
 	this->setFormat(format);
 	sh = new Shader(vertex, fragment);
 	texture = new Texture(sh);
-
 	m_timer = new QTimer(this);
 	connect(m_timer, SIGNAL(timeout()), this, SLOT(updaterot()));
 	m_timer->start(20);
@@ -127,6 +95,7 @@ void GLWidget::cleanup()
 	makeCurrent();
 	delete m_program;
 	delete sh;
+	delete mainScene;
 	m_program = 0;
 	doneCurrent();
 }
@@ -149,31 +118,21 @@ void GLWidget::initializeGL()
 	sh->addVertex(vertex);
 	sh->addFragment(fragment);
 	sh->setup();
-	//wczytanie programu cieniujacego
-	/*m_program = new QOpenGLShaderProgram;
-	m_program->addShaderFromSourceCode(QOpenGLShader::Vertex, vertex);
-	m_program->addShaderFromSourceCode(QOpenGLShader::Fragment, fragment);
-	//m_program->bindAttributeLocation("vertex", PROGRAM_VERTEX_ATTRIBUTE);
-	//m_program->bindAttributeLocation("in_texcoord", PROGRAM_TEXCOORD_ATTRIBUTE);
-	m_program->link();
-	m_program->bind();*/
 
-
-	//utworzenie vbo i vao
+	//utworzenie  vao
 	//Generowanie identyfikatorów obiektów tablic wierzcho³ków
 	m_vao.create();
 	QOpenGLVertexArrayObject::Binder vaoBinder(&m_vao);
-
-	//texture->addTexture("texture/texture_sun.jpg");
-	///texture->addTexture("texture/metal.png");
-	/*m_texture = new QOpenGLTexture(QImage("texture/texture_sun.jpg").mirrored(true, true));
-	m_texture->setMinificationFilter(QOpenGLTexture::Nearest);
-	m_texture->setMagnificationFilter(QOpenGLTexture::Linear);*/
+	mainScene = new SolarSystem();
 
 	//obj = new Object("mars", m_geometry, texture);
 	Position pos;
 	planet = new Planet("Sun", 10E10, glm::dvec3(0, 0, 0), 5, 1, 512, sh, "texture/texture_sun.jpg");
 }
+
+/*void drawScene(Simulation& scene, Camera camera) {
+	scene.drawScene(camera);
+}*/
 
 void GLWidget::paintGL()
 {
@@ -202,7 +161,6 @@ void GLWidget::paintGL()
 	//narysowanie danych zawartych w tablicach wierzcho³ków dla obiektu
 	//obj->Draw(sh->getProgram(), camera);
 	planet->GetObject()->Draw(sh->getProgram(), camera);
-
 	// wy³¹czenie shadera
 	sh->getProgram()->release();
 }
@@ -217,7 +175,7 @@ void GLWidget::mousePressEvent(QMouseEvent *e)
 	lastX = e->pos().x();
 	lastY = e->pos().y();
 	
-	qDebug() << lastX;
+	//qDebug() << lastX;
 }
 
 bool firstMouse = true;
@@ -244,7 +202,7 @@ void GLWidget::wheelEvent(QWheelEvent* e) {
 	QPoint numPixels = e->pixelDelta();
 	QPoint numDegrees = e->angleDelta() / 8;
 	QPoint numSteps = numDegrees / 15;
-	qDebug() << numSteps;
+	//qDebug() << numSteps;
 	camera.ProcessMouseScroll(numSteps.y());
 }
 

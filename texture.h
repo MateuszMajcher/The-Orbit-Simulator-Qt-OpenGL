@@ -11,6 +11,9 @@
 using glm::vec3;
 using glm::mat4;
 
+class Shader;
+class Position;
+class Camera;
 
 class Texture {
 public:

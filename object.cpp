@@ -13,7 +13,7 @@ Object::Object(const QString& name, Mesh* mesh, Texture* tex) {
 void Object::Draw(QOpenGLShaderProgram *program, Camera camera) {
 	tex->bind();
 	tex->Update(pos, camera);
-	mesh->draw(program);
+	mesh->draw(tex->GetShader()->getProgram());
 }
 
 Object::~Object() {
