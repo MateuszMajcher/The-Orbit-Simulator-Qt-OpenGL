@@ -47,13 +47,12 @@ public:
 	QSize sizeHint() const override;
 
 	public slots:
-	void cleanup();
-	void updaterot();
-	//void drawScene(QOpenGLShaderProgram *program, Simulation& scene, Camera camera);
+		void cleanup();
+		void updaterot();
+		void createPlanet(QString name);
+
 signals:
-	void xRotationChanged(int angle);
-	void yRotationChanged(int angle);
-	void zRotationChanged(int angle);
+	
 
 protected:
 	void initializeGL() override;
@@ -63,6 +62,9 @@ protected:
 	void mouseMoveEvent(QMouseEvent *e) Q_DECL_OVERRIDE;
 	void mouseReleaseEvent(QMouseEvent *e) Q_DECL_OVERRIDE;
 	void wheelEvent(QWheelEvent* e) Q_DECL_OVERRIDE;
+	void keyPressEvent(QKeyEvent* e) Q_DECL_OVERRIDE;
+	void keyReleaseEvent(QKeyEvent* e) Q_DECL_OVERRIDE;
+	void Do_Movement();
 
 private:
 	void setupVertexAttribs();

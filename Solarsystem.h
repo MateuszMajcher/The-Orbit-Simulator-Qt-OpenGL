@@ -2,8 +2,13 @@
 #ifndef SOLARSYSTEM_H
 #define SOLARSYSTEM_H
 
-#include <vector>
+#include <list>
 #include "planet.h"
+// Include GLM
+#include <glm\glm.hpp>
+#include <glm\gtc\matrix_transform.hpp>
+#include <glm\gtc\type_ptr.hpp>
+
 
 class Planet;
 enum TextureFile;
@@ -58,9 +63,14 @@ public:
 	void addPlanet(Planet* planet);
 	// Utworzenie nowej planety
 	void createPlanet(Shader* shader, const QString& path);
+	//Rusowanie sceny
+	void drawPlanet(Camera& camera);
+	//update sceny
+	void Update(GLfloat rotx);
+
 
 private:
-	std::vector<Planet*> nPlanets;
+	std::list<Planet*> nPlanets;
 	//Shader slonca
 	Shader* sunShader;
 	//Shader planet

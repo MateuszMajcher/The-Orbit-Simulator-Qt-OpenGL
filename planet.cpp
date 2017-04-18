@@ -16,7 +16,7 @@ Planet::~Planet() {
 }
 
 
-void Planet::draw(QOpenGLShaderProgram *program, Camera& camera) {
+void Planet::draw(Camera& camera) {
 	glCullFace(GL_BACK);      // pomija rysowanie œcian odwróconych ty³em
-	m_object->Draw(program, camera);
+	m_object->Draw(camera);
 }

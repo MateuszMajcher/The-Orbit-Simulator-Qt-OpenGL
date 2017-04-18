@@ -12,7 +12,7 @@ public:
 	~Simulation();
 	static Simulation* CurrentSim;
 	static void addObject(Object* obj);
-	void drawScene(QOpenGLShaderProgram *program, Camera& camera);
+	void drawScene(Camera& camera);
 
 private:
 	std::list<Object*> objects;

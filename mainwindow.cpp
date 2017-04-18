@@ -15,9 +15,11 @@
 #include <QHBoxLayout>
 #include <QSize>
 #include <QTableWidget>
+#include <QMessageBox>
+#include <QtWidgets>
 
 MainWindow::MainWindow()
-	:glWidget(new GLWidget)
+	:glWidget(new GLWidget(this))
 {
     setCentralWidget(glWidget);
 	createActions();
@@ -97,29 +99,71 @@ void MainWindow::createDock() {
 	dock->setAllowedAreas(Qt::BottomDockWidgetArea);
 	dock->setMaximumWidth(400);
 	dock->setMaximumHeight(150);
-	planetList = new QTableWidget(1, 2, this);
-	QTableWidgetItem *planetName = new QTableWidgetItem(tr("nazwa"));
-	QTableWidgetItem *sizeName = new QTableWidgetItem(tr("rozmiar"));
 
-	planetList->setHorizontalHeaderItem(0, planetName);
-	planetList->setHorizontalHeaderItem(1, sizeName);
+	planetList = new QTableWidget(0, 2, this);
+	QTableWidgetItem *classHeader = new QTableWidgetItem(tr("Nazwa"));
+	QTableWidgetItem *countHeader = new QTableWidgetItem(tr("Size"));
+	planetList->setHorizontalHeaderItem(0, classHeader);
+	planetList->setHorizontalHeaderItem(1, countHeader);
+	planetList->horizontalHeader()->setStretchLastSection(true);
+	planetList->setEditTriggers(QAbstractItemView::NoEditTriggers);
+	planetList->setSelectionBehavior(QAbstractItemView::SelectRows);
+	planetList->setSelectionMode(QAbstractItemView::SingleSelection);
 
 	dock->setWidget(planetList);
 	addDockWidget(Qt::BottomDockWidgetArea, dock);
 	//viewMenu->addAction(dock->toggleViewAction());
-
+	/************************************************************************/
 	QDockWidget *simulationDock = new QDockWidget(tr("settings panel"), this);
 	simulationDock->setAllowedAreas(Qt::BottomDockWidgetArea);
 	settingsPanel = new QWidget(simulationDock);
 
 
 	QGridLayout *layout = new QGridLayout();
-	layout->addWidget(new QPushButton("Dodaj planete"), 0, 0);
-	layout->addWidget(new QPushButton("Dodaj slonce"), 0, 1);
+
+	QPushButton* createPlanet_button = new QPushButton("Dodaj planete", this);
+	QPushButton* createSun_button = new QPushButton("Dodaj slonce", this);
+
+	//Sterowanie
+	QPushButton* deletePlanet_button = new QPushButton("Usun", this);
+	QPushButton* Reset_button = new QPushButton("Reset", this);
+
+	layout->addWidget(createPlanet_button, 0, 0);
+	layout->addWidget(createSun_button, 0, 1);
+	layout->addWidget(deletePlanet_button, 1, 0);
+	layout->addWidget(Reset_button, 1, 1);
+
 	settingsPanel->setLayout(layout);
 
 	simulationDock->setWidget(settingsPanel);
 	addDockWidget(Qt::BottomDockWidgetArea, simulationDock);
+
+	connect(createPlanet_button, SIGNAL(clicked()), this, SLOT(addPlanet()));
+	connect(createSun_button, SIGNAL(clicked()), this, SLOT(addSun()));
+
+	connect(deletePlanet_button, SIGNAL(clicked()), this, SLOT(eraseItem()));
+}
+
+/*Usuniecie wiersza tabeli*/
+void MainWindow::eraseItem()
+{
+	int current = planetList->currentRow();
+	if (current >= 0)
+		planetList->removeRow(current);
+}
+
+/*Dodanie planety*/
+void MainWindow::addPlanet() {
+	AddDialog* loginDialog = new AddDialog(this);
+	loginDialog->exec();
+	qDebug() << "dodano planete";
+	planetList->insertRow(planetList->rowCount());
+	planetList->setItem(planetList->rowCount()-1, 0, new QTableWidgetItem("ziemia"));
+	planetList->setItem(planetList->rowCount()-1, 1, new QTableWidgetItem(QString::number(10)));
+	emit addPlanet("ziemia");
+}
+void MainWindow::addSun() {
+	qDebug() << "dodano slonce";
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *e) {

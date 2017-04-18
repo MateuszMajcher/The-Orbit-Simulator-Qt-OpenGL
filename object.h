@@ -9,7 +9,7 @@ class Object : protected QOpenGLFunctions {
 public:
 	Object(const QString& name);
 	Object(const QString& name, Mesh* obj, Texture* tex);
-	void Draw(QOpenGLShaderProgram *program, Camera camera);
+	void Draw(Camera camera);
 	~Object();
 
 	Position& GetPosition() { return pos; }

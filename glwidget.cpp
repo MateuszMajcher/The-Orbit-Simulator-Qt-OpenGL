@@ -4,7 +4,7 @@
 #include <QCoreApplication>
 #include <math.h>
 #include <QMessageBox>
-
+#include <ctime>
 
 // Camera
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
@@ -15,6 +15,11 @@ GLfloat pitch = 0.0f;
 GLfloat lastX = WIDTH / 2.0;
 GLfloat lastY = HEIGHT / 2.0;
 GLfloat rotx = 0;
+
+//klawiatura
+bool keys[1024];
+GLfloat deltaTime = 0.0f;
+GLfloat lastFrame = 0.0f;
 
 static const char *vertexShaderSourceCore = R"(
     #version 120
@@ -51,17 +56,31 @@ GLWidget::GLWidget(QWidget *parent)
 	, m_geometry(0)
 	, camera(glm::vec3(0.0f, 0.0f, 3.0f))
 {
+	setFocusPolicy(Qt::StrongFocus);
+	setFocus();
 	QSurfaceFormat format = QSurfaceFormat::defaultFormat();
 	format.setSamples(16);
 	format.setSwapInterval(0);
 	QSurfaceFormat::setDefaultFormat(format);
 	this->setFormat(format);
+
+	connect(parent, SIGNAL(addPlanet(QString)), this, SLOT(createPlanet(QString)));
+
 	sh = new Shader(vertex, fragment);
 	texture = new Texture(sh);
 	m_timer = new QTimer(this);
 	connect(m_timer, SIGNAL(timeout()), this, SLOT(updaterot()));
 	m_timer->start(20);
 	
+}
+
+
+void GLWidget::createPlanet(QString name) {
+	qDebug() << name;
+	Position pos;
+	Planet* planet = new Planet("Sun", 10E10, glm::dvec3(0, 0, 1), 5, 1, 512, sh, "texture/texture_sun.jpg");
+	planet->GetObject()->GetPosition().setPosition(glm::dvec3(0, 2, 0));
+	mainScene->addPlanet(planet);
 }
 
 GLWidget::~GLWidget()
@@ -95,7 +114,6 @@ void GLWidget::cleanup()
 	makeCurrent();
 	delete m_program;
 	delete sh;
-	delete mainScene;
 	m_program = 0;
 	doneCurrent();
 }
@@ -123,23 +141,35 @@ void GLWidget::initializeGL()
 	//Generowanie identyfikatorów obiektów tablic wierzcho³ków
 	m_vao.create();
 	QOpenGLVertexArrayObject::Binder vaoBinder(&m_vao);
-	mainScene = new SolarSystem();
+
 
 	//obj = new Object("mars", m_geometry, texture);
 	Position pos;
 	planet = new Planet("Sun", 10E10, glm::dvec3(0, 0, 0), 5, 1, 512, sh, "texture/texture_sun.jpg");
+
+	mainScene = new SolarSystem();
+	
 }
 
-/*void drawScene(Simulation& scene, Camera camera) {
-	scene.drawScene(camera);
-}*/
+
 
 void GLWidget::paintGL()
 {
+	//set frame time
+	GLfloat currentTime = std::clock();
+	deltaTime = currentTime - lastFrame;
+	lastFrame = currentTime;
+	deltaTime = deltaTime / (float)CLOCKS_PER_SEC;
+	//qDebug() << deltaTime;
+
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
+
+	Do_Movement();
+
+
 
 	glm::mat4 model;
 	glm::mat4 view;
@@ -159,8 +189,10 @@ void GLWidget::paintGL()
 	//obj->SetPosition(pos);
 	planet->GetObject()->SetPosition(pos);
 	//narysowanie danych zawartych w tablicach wierzcho³ków dla obiektu
-	//obj->Draw(sh->getProgram(), camera);
-	planet->GetObject()->Draw(sh->getProgram(), camera);
+	//planet->draw(camera);
+	mainScene->Update(rotx);
+	mainScene->drawPlanet(camera);
+
 	// wy³¹czenie shadera
 	sh->getProgram()->release();
 }
@@ -168,6 +200,18 @@ void GLWidget::paintGL()
 void GLWidget::resizeGL(int w, int h)
 {
 	camera.setSize(w, h);
+}
+
+void GLWidget::Do_Movement() {
+	// Camera controls
+	if (keys[Qt::Key_W])
+		camera.ProcessKeyboard(FORWARD, deltaTime);
+	if (keys[Qt::Key_S])
+		camera.ProcessKeyboard(BACKWARD, deltaTime);
+	if (keys[Qt::Key_A])
+		camera.ProcessKeyboard(LEFT, deltaTime);
+	if (keys[Qt::Key_D])
+		camera.ProcessKeyboard(RIGHT, deltaTime);
 }
 
 void GLWidget::mousePressEvent(QMouseEvent *e)
@@ -206,3 +250,11 @@ void GLWidget::wheelEvent(QWheelEvent* e) {
 	camera.ProcessMouseScroll(numSteps.y());
 }
 
+void GLWidget::keyPressEvent(QKeyEvent* e) {
+	keys[e->key()] = true;
+}
+
+
+void GLWidget::keyReleaseEvent(QKeyEvent* e) {
+	keys[e->key()] = false;
+}

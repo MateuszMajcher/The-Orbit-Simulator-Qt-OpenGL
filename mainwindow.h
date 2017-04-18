@@ -4,6 +4,8 @@
 #include <QtWidgets/QMainWindow>
 #include <QHBoxLayout>
 #include "glwidget.h"
+#include "addDialog.h"
+
 
 class QSlider;
 class QPushButton;
@@ -30,12 +32,18 @@ protected:
 	void keyPressEvent(QKeyEvent *event) override;
 
 private slots:
+	void addPlanet();
+	void addSun();
+	void eraseItem();
 
+signals:
+	   void addPlanet(QString name);
 
 private:
 	void createActions();
 	QSlider *createSlider();
 	void createDock();
+	
 
 	void about();
 
@@ -50,6 +58,7 @@ private:
 	QMenu *viewMenu;
 
 	QTableWidget *planetList;
+	QStringList  m_TableHeader;
 
 };
 
