@@ -153,5 +153,8 @@
     <ClInclude Include="Solarsystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="point_type.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

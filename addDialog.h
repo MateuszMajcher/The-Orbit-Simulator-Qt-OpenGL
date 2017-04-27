@@ -12,6 +12,7 @@
 #include <QGroupBox>
 #include <QFormLayout>
 #include <QRadioButton>
+#include <QDoubleValidator>
 // Include GLM
 #include <glm\glm.hpp>
 #include <glm\gtc\matrix_transform.hpp>
@@ -36,6 +37,7 @@ private:
 	QDialogButtonBox* buttons;
 
 	void setupGUI();
+	void setDoubleValidator(QLineEdit* edit, double min, double max);
 
 public:
 	explicit AddDialog(QWidget *parent = 0);

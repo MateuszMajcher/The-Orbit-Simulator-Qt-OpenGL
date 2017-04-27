@@ -49,10 +49,11 @@ public:
 	public slots:
 		void cleanup();
 		void updaterot();
-		void createPlanet(QString name);
-
+		void createPlanet(QString& name, double radius, double mass, glm::vec3 position, glm::vec3 velocity);
+		void deletePlanet(int);
+		void createSolarSystem();
 signals:
-	
+		void updateTable(QString, double, double); 
 
 protected:
 	void initializeGL() override;

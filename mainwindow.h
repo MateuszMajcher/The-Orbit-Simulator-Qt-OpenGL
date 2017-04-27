@@ -35,9 +35,9 @@ private slots:
 	void addPlanet();
 	void addSun();
 	void eraseItem();
-
+	void updateTable(QString, double, double);
 signals:
-	   void addPlanet(QString name);
+	void deletePlanet(int);
 
 private:
 	void createActions();

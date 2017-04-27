@@ -5,7 +5,7 @@
 #include <math.h>
 #include <QMessageBox>
 #include <ctime>
-
+#include "Solarsystem.h"
 // Camera
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -64,7 +64,10 @@ GLWidget::GLWidget(QWidget *parent)
 	QSurfaceFormat::setDefaultFormat(format);
 	this->setFormat(format);
 
-	connect(parent, SIGNAL(addPlanet(QString)), this, SLOT(createPlanet(QString)));
+	connect(parent,
+		SIGNAL(deletePlanet(int)),
+		this,
+		SLOT(deletePlanet(int)));
 
 	sh = new Shader(vertex, fragment);
 	texture = new Texture(sh);
@@ -75,13 +78,37 @@ GLWidget::GLWidget(QWidget *parent)
 }
 
 
-void GLWidget::createPlanet(QString name) {
-	qDebug() << name;
-	Position pos;
-	Planet* planet = new Planet("Sun", 10E10, glm::dvec3(0, 0, 1), 5, 1, 512, sh, "texture/texture_sun.jpg");
-	planet->GetObject()->GetPosition().setPosition(glm::dvec3(0, 2, 0));
-	mainScene->addPlanet(planet);
+void GLWidget::createPlanet(QString& name, double radius, double mass, glm::vec3 position, glm::vec3 velocity) {
+	qDebug() << "nazwa: " << name;
+	qDebug() << "radius: " << radius;
+	qDebug() << "masa: " << mass;
+	qDebug() << "pozycja: " << position.x<<position.y<<position.z;
+	qDebug() << "ped: " << velocity.x << velocity.y << velocity.z;
+	mainScene->createPlanet(name, radius, mass, position, velocity, SolarSystem::SUN);
+	emit updateTable(name, radius, mass);
 }
+
+void GLWidget::createSolarSystem() {
+	QString name;
+	double radius, mass;
+	name = "sun", radius = 1; mass = 10;
+	mainScene->createPlanet(name, radius, mass, glm::dvec3(0, 0, 0), glm::dvec3(0, 0, 0), SolarSystem::SUN);
+	emit updateTable(name, radius, mass);
+
+	name = "Mars", radius = 1; mass = 10;
+	mainScene->createPlanet(name, radius, mass, glm::dvec3(-3.00124, 3.96274, 1.77152), glm::dvec3(0, 0, 0), SolarSystem::MARS);
+	emit updateTable(name, radius, mass);
+	
+	
+}
+
+
+
+void GLWidget::deletePlanet(int idx) {
+	mainScene->deletePlanet(idx);
+	qDebug() << "usunieto planet nr: " << idx;
+}
+
 
 GLWidget::~GLWidget()
 {
@@ -148,7 +175,7 @@ void GLWidget::initializeGL()
 	planet = new Planet("Sun", 10E10, glm::dvec3(0, 0, 0), 5, 1, 512, sh, "texture/texture_sun.jpg");
 
 	mainScene = new SolarSystem();
-	
+	createSolarSystem();
 }
 
 

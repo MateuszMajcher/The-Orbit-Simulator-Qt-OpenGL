@@ -61,8 +61,10 @@ public:
 	QString ToStringTexture(SolarSystem::TextureFile v);
 	// Dodanie planety do sceny
 	void addPlanet(Planet* planet);
+	//usuniecie planety ze sceny
+	void deletePlanet(int index);
 	// Utworzenie nowej planety
-	void createPlanet(Shader* shader, const QString& path);
+	void createPlanet(QString name, double radius, double mass, glm::vec3 position, glm::vec3 velocity, SolarSystem::TextureFile texture);
 	//Rusowanie sceny
 	void drawPlanet(Camera& camera);
 	//update sceny
@@ -75,6 +77,7 @@ private:
 	Shader* sunShader;
 	//Shader planet
 	Shader* planetShader;
+
 };
 
 

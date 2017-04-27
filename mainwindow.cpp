@@ -100,11 +100,13 @@ void MainWindow::createDock() {
 	dock->setMaximumWidth(400);
 	dock->setMaximumHeight(150);
 
-	planetList = new QTableWidget(0, 2, this);
-	QTableWidgetItem *classHeader = new QTableWidgetItem(tr("Nazwa"));
-	QTableWidgetItem *countHeader = new QTableWidgetItem(tr("Size"));
-	planetList->setHorizontalHeaderItem(0, classHeader);
-	planetList->setHorizontalHeaderItem(1, countHeader);
+	planetList = new QTableWidget(0, 3, this);
+	QTableWidgetItem *nameHeader = new QTableWidgetItem(tr("Name"));
+	QTableWidgetItem *radiusHeader = new QTableWidgetItem(tr("Radius"));
+	QTableWidgetItem *massHeader = new QTableWidgetItem(tr("Mass"));
+	planetList->setHorizontalHeaderItem(0, nameHeader);
+	planetList->setHorizontalHeaderItem(1, radiusHeader);
+	planetList->setHorizontalHeaderItem(2, massHeader);
 	planetList->horizontalHeader()->setStretchLastSection(true);
 	planetList->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	planetList->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -142,26 +144,47 @@ void MainWindow::createDock() {
 	connect(createSun_button, SIGNAL(clicked()), this, SLOT(addSun()));
 
 	connect(deletePlanet_button, SIGNAL(clicked()), this, SLOT(eraseItem()));
+
+	connect(glWidget,
+		SIGNAL(updateTable(QString, double, double)),
+		this,
+		SLOT(updateTable(QString, double, double)));
 }
 
 /*Usuniecie wiersza tabeli*/
 void MainWindow::eraseItem()
 {
 	int current = planetList->currentRow();
-	if (current >= 0)
+	
+	if (current >= 0) {
+		emit deletePlanet(current);
 		planetList->removeRow(current);
+	}
 }
 
 /*Dodanie planety*/
 void MainWindow::addPlanet() {
 	AddDialog* loginDialog = new AddDialog(this);
+	connect(loginDialog,
+
+		SIGNAL(acceptData(QString&, double, double, glm::vec3, glm::vec3)),
+		glWidget,
+		SLOT(createPlanet(QString&, double, double, glm::vec3, glm::vec3)));
+
 	loginDialog->exec();
 	qDebug() << "dodano planete";
-	planetList->insertRow(planetList->rowCount());
-	planetList->setItem(planetList->rowCount()-1, 0, new QTableWidgetItem("ziemia"));
-	planetList->setItem(planetList->rowCount()-1, 1, new QTableWidgetItem(QString::number(10)));
-	emit addPlanet("ziemia");
+	
+	
 }
+
+void MainWindow::updateTable(QString name, double radius, double mass) {
+	planetList->insertRow(planetList->rowCount());
+	planetList->setItem(planetList->rowCount() - 1, 0, new QTableWidgetItem(name));
+	planetList->setItem(planetList->rowCount() - 1, 1, new QTableWidgetItem(QString::number(radius)));
+	planetList->setItem(planetList->rowCount() - 1, 2, new QTableWidgetItem(QString::number(mass)));
+}
+
+
 void MainWindow::addSun() {
 	qDebug() << "dodano slonce";
 }

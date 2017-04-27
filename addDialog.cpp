@@ -25,8 +25,8 @@ void AddDialog::setupGUI() {
 	isPlanet = new QRadioButton(tr("Slonce"));
 
 	nameEdit = new QLineEdit;
-	nameEdit = new QLineEdit;
 	radiusEdit = new QLineEdit;
+	
 	massEdit = new QLineEdit;
 	xPositionEdit = new QLineEdit;
 	yPositionEdit = new QLineEdit;
@@ -91,10 +91,57 @@ void AddDialog::setupGUI() {
 	mainLayout->addWidget(positionGroupBox);
 	mainLayout->addWidget(velocityGroupBox);
 	mainLayout->addWidget(buttons);
+
+
+
+	setDoubleValidator(radiusEdit, 0.1, 10.0);
+	setDoubleValidator(massEdit, 0.1, 10.0);
+	setDoubleValidator(xPositionEdit, 0.1, 10.0);
+	setDoubleValidator(yPositionEdit, 0.1, 10.0);
+	setDoubleValidator(zPositionEdit, 0.1, 10.0);
+	setDoubleValidator(xVelocityEdit, 0.1, 10.0);
+	setDoubleValidator(yVelocityEdit, 0.1, 10.0);
+	setDoubleValidator(zVelocityEdit, 0.1, 10.0);
+
+
+	/***********Debug***********/
+	nameEdit->setText("Mars");
+	radiusEdit->setText("0.8");
+
+	massEdit->setText("5");
+	xPositionEdit->setText("0");
+	yPositionEdit->setText("1.5");
+	zPositionEdit->setText("2");
+
+	xVelocityEdit->setText("0.8");
+	yVelocityEdit->setText("0.125");
+	zVelocityEdit->setText("1.0");
+
+
 	setLayout(mainLayout);
 }
 
+void AddDialog::setDoubleValidator(QLineEdit* edit, double min, double max) {
+	QDoubleValidator *massDoubleVal = new QDoubleValidator(0.1, 10.0, 4, edit);
+	massDoubleVal->setNotation(QDoubleValidator::StandardNotation);
+	massDoubleVal->setLocale(QLocale::C);
+	edit->setValidator(massDoubleVal);
+}
+
 void AddDialog::slotAcceptData() {
+
 	QString username = nameEdit->text();
-	qDebug() << username;
+	double radius = radiusEdit->text().toDouble();
+	double mass = massEdit->text().toDouble();
+
+	double xPosition = xPositionEdit->text().toDouble();
+	double yPosition = yPositionEdit->text().toDouble();
+	double zPosition = zPositionEdit->text().toDouble();
+
+	double xVelocity = xVelocityEdit->text().toDouble();
+	double yVelocity = yVelocityEdit->text().toDouble();
+	double zVelocity = zVelocityEdit->text().toDouble();
+
+	emit acceptData(username, radius, mass, glm::vec3(xPosition, yPosition, zPosition), glm::vec3(xVelocity, yVelocity, zVelocity));
+	close();
 }

@@ -1,5 +1,12 @@
 #include "Solarsystem.h"
 
+template <typename T>
+void remove(std::list<T>& vec, size_t pos) {
+	typename std::list<T>::iterator it = vec.begin();
+	std::advance(it, pos);
+	vec.erase(it);
+}
+
 SolarSystem::SolarSystem() 
 {
 	sunShader = new Shader(vertex, fragment);
@@ -12,7 +19,7 @@ SolarSystem::SolarSystem()
 	planetShader->setup();
 
 
-	createPlanet(sunShader, ToStringTexture(SUN));
+	//createPlanet(sunShader, ToStringTexture(SUN));
 	qDebug() << nPlanets.size();
 	qDebug() << "size";
 }
@@ -26,16 +33,20 @@ void SolarSystem::addPlanet(Planet* planet) {
 	qDebug() << nPlanets.size();
 }
 
-void SolarSystem::createPlanet(Shader* shader, const QString& path) {
-	Planet* Sun = new Planet("Sun", 10E10, glm::dvec3(0, 0, 0), 5, 1, 512, shader, path);
-	Sun->GetObject()->GetPosition().setPosition(glm::dvec3(0, 0, 0));
-
-	Planet* mars = new Planet("Mars", 10E10, glm::dvec3(0, 0, 0), 5, 1, 512, shader, ToStringTexture(SolarSystem::MARS));
-	mars->GetObject()->GetPosition().setPosition(glm::dvec3(0, 1, 0));
-
-	addPlanet(Sun);
-	addPlanet(mars);
+void SolarSystem::deletePlanet(int index) {
+	qDebug() << "Delete planet index " << index;
+	remove(nPlanets, index);
+	qDebug() << nPlanets.size();
 }
+
+void SolarSystem::createPlanet(QString name, double radius, double mass, glm::vec3 position, glm::vec3 velocity, SolarSystem::TextureFile texture) {
+	Planet* Sun = new Planet(name, 10E10, glm::dvec3(0, 0, 0), 5, 1, 512, sunShader, ToStringTexture(texture));
+	Sun->GetObject()->GetPosition().setPosition(position);
+	Sun->GetObject()->GetPosition().SetScale(glm::dvec3(radius, radius, radius));
+	addPlanet(Sun);
+}
+
+
 
 void SolarSystem::Update(GLfloat rotx) {
 	for (Planet* p : nPlanets) {
@@ -59,3 +70,4 @@ void SolarSystem::drawPlanet(Camera& camera) {
 		planet->draw(camera);
 	}
 }
+
