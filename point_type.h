@@ -160,6 +160,14 @@ std::ostream& operator<<(std::ostream &out, const point< T, Dim > &p)
 	return out;
 }
 
+template< class T, size_t Dim >
+QDebug operator<<(QDebug out, const point< T, Dim > &p)
+{
+	if (Dim > 0) out << p[0];
+	for (size_t i = 1; i<Dim; ++i) out << " " << p[i];
+	return out;
+}
+
 
 
 

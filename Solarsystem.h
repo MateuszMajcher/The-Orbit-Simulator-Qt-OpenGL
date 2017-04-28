@@ -8,7 +8,12 @@
 #include <glm\glm.hpp>
 #include <glm\gtc\matrix_transform.hpp>
 #include <glm\gtc\type_ptr.hpp>
+#include "point_type.h"
+#include <boost/array.hpp>
+#include <boost/numeric/odeint.hpp>
 
+using namespace std;
+using namespace boost::numeric::odeint;
 
 class Planet;
 enum TextureFile;
@@ -46,8 +51,29 @@ static const char *fragment = R"(
 }
 )";
 
+struct mass_type;
+const double gravitational_constant = 2.95912208286e-4;
+
 
 class SolarSystem {
+
+private:
+	std::list<Planet*> nPlanets;
+	//Shader slonca
+	Shader* sunShader;
+	//Shader planet
+	Shader* planetShader;
+
+
+
+	//Boost odeint
+	size_t n = 6;
+	
+	typedef point<double, 3> point_type;
+	typedef boost::array< point_type, 6> container_type;
+	typedef boost::array<double, 6> mass_type;
+	typedef symplectic_rkn_sb3a_mclachlan< container_type > stepper_type;
+
 public:
 	SolarSystem();
 	~SolarSystem();
@@ -71,12 +97,68 @@ public:
 	void Update(GLfloat rotx);
 
 
-private:
-	std::list<Planet*> nPlanets;
-	//Shader slonca
-	Shader* sunShader;
-	//Shader planet
-	Shader* planetShader;
+	//boost
+	struct solar_system_coor {
+		const mass_type &m_masses;
+
+		solar_system_coor(const mass_type &masses) : m_masses(masses) { }
+
+		void operator()(const container_type &p, container_type &dqdt) const
+		{
+			for (size_t i = 0; i<6; ++i)
+				dqdt[i] = p[i] / m_masses[i];
+		}
+
+	};
+
+
+	struct solar_system_momentum
+	{
+		const mass_type &m_masses;
+
+		solar_system_momentum(const mass_type &masses) : m_masses(masses) { }
+
+		void operator()(const container_type &q, container_type &dpdt) const
+		{
+			const size_t n = q.size();
+			for (size_t i = 0; i<n; ++i)
+			{
+				dpdt[i] = 0.0;
+				for (size_t j = 0; j<i; ++j)
+				{
+					point_type diff = q[j] - q[i];
+					double d = abs(diff);
+					diff *= (gravitational_constant * m_masses[i] * m_masses[j] / d / d / d);
+					dpdt[i] += diff;
+					dpdt[j] -= diff;
+
+				}
+			}
+		}
+	};
+
+
+	//[ streaming_observer
+	struct streaming_observer
+	{
+		std::ostream& m_out;
+
+		streaming_observer(std::ostream &out) : m_out(out) { }
+
+		template< class State >
+		void operator()(const State &x, double t) const
+		{
+			container_type &q = x.first;
+			m_out << t;
+			for (size_t i = 0; i<q.size(); ++i) m_out << "\t" << q[i];
+			m_out << "\n";
+		}
+	};
+	//]
+
+	point_type center_of_mass(const container_type &x, const mass_type &m);
+
+	double energy(const container_type &q, const container_type &p, const mass_type &masses);
 
 };
 
