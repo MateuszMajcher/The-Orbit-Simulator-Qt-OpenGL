@@ -23,64 +23,8 @@ SolarSystem::SolarSystem()
 
 
 	//createPlanet(sunShader, ToStringTexture(SUN));
-	qDebug() << nPlanets.size();
-	qDebug() << "size";
 
 
-	
-
-	mass_type masses = { {
-			1.00000597682 ,      // sun
-			0.000954786104043 ,  // jupiter
-		0.000285583733151 ,  // saturn
-		0.0000437273164546 , // uranus
-		0.0000517759138449 , // neptune
-		1.0 / (1.3e8)      // pluto
-		} };
-
-	container_type q = { {
-			point_type(0.0 , 0.0 , 0.0) ,                        // sun
-			point_type(-3.5023653 , -3.8169847 , -1.5507963) ,   // jupiter
-		point_type(9.0755314 , -3.0458353 , -1.6483708) ,    // saturn
-		point_type(8.3101420 , -16.2901086 , -7.2521278) ,   // uranus
-		point_type(11.4707666 , -25.7294829 , -10.8169456) , // neptune
-		point_type(-15.5387357 , -25.2225594 , -3.1902382)   // pluto
-		} };
-
-	container_type p = { {
-			point_type(0.0 , 0.0 , 0.0) ,                        // sun
-			point_type(0.00565429 , -0.00412490 , -0.00190589) , // jupiter
-		point_type(0.00168318 , 0.00483525 , 0.00192462) ,   // saturn
-		point_type(0.00354178 , 0.00137102 , 0.00055029) ,   // uranus
-		point_type(0.00288930 , 0.00114527 , 0.00039677) ,   // neptune
-		point_type(0.00276725 , -0.00170702 , -0.00136504)   // pluto
-		} };
-
-	point_type qmean = center_of_mass(q, masses);
-	point_type pmean = center_of_mass(p, masses);
-	for (size_t i = 0; i<n; ++i)
-	{
-		q[i] -= qmean;
-		p[i] -= pmean;
-	}
-
-	for (size_t i = 0; i<n; ++i) p[i] *= masses[i];
-
-	//[ integration_solar_system
-
-
-
-	const double dt = 100;
-	double t = 0.0;
-	for (size_t i = 0; i<2000; ++i, t += dt)
-	{
-		//std::this_thread::sleep_for(std::chrono::milliseconds(20));
-		stepper_type().do_step(make_pair(solar_system_coor(masses), solar_system_momentum(masses)),
-			make_pair(boost::ref(q), boost::ref(p)), t, dt);
-		qDebug() << t;
-		for (size_t i = 0; i < q.size(); ++i) qDebug() << "\t"; qDebug() << q[1];
-		qDebug() << "\n";
-	}
 
 }
 
@@ -90,29 +34,92 @@ SolarSystem::~SolarSystem() {
 
 void SolarSystem::addPlanet(Planet* planet) {
 	nPlanets.push_back(planet);
-	qDebug() << nPlanets.size();
+	qDebug() << "Liczba planet" << nPlanets.size();
 }
 
 void SolarSystem::deletePlanet(int index) {
 	qDebug() << "Delete planet index " << index;
 	remove(nPlanets, index);
-	qDebug() << nPlanets.size();
+	qDebug() <<"Liczba planet" << nPlanets.size();
 }
 
-void SolarSystem::createPlanet(QString name, double radius, double mass, glm::vec3 position, glm::vec3 velocity, SolarSystem::TextureFile texture) {
+void SolarSystem::createPlanet(QString name, double radius, double mass, glm::dvec3 position, glm::dvec3 velocity, SolarSystem::TextureFile texture) {
 	Planet* Sun = new Planet(name, 10E10, glm::dvec3(0, 0, 0), 5, 1, 512, sunShader, ToStringTexture(texture));
 	Sun->GetObject()->GetPosition().setPosition(position);
 	Sun->GetObject()->GetPosition().SetScale(glm::dvec3(radius, radius, radius));
+	masses.push_back(mass);
+	p.push_back(point_type(velocity));
+	q.push_back(point_type(position));
+
+	qDebug() << "masa: " << masses[masses.size() - 1];
+	qDebug() << "pozycja: " << q[masses.size() - 1];
+	qDebug() << "velotiy: " << p[masses.size() - 1];
+
+	qmean = center_of_mass(q, masses);
+	pmean = center_of_mass(p, masses);
+	qDebug() << "Srednia q: " << qmean;
+	qDebug() << "Srednia p: " << pmean;
+
 	addPlanet(Sun);
 }
 
+void SolarSystem::start() {
+	qDebug() << "rozpoczecie symulacji";
 
+	if (!run) { 
+		run = true;
+		if (!init) {
+			init = true;
+			for (size_t i = 0; i < q.size(); ++i)
+			{
+				q[i] -= qmean;
+				p[i] -= pmean;
+				qDebug() << "srednia1: " << q[i];
+				qDebug() << "srednia2: " << p[i];
+			}
+
+			for (size_t i = 0; i < q.size(); ++i) {
+				p[i] *= masses[i];
+				qDebug() << "masa: " << p[i] << endl;
+			}
+		}
+	
+	}
+
+	else {
+		qDebug() << "zatrzymanie symulacji";
+		run = false;
+	}
+
+}
+
+void reset() {
+	qDebug() << "reset";
+}
 
 void SolarSystem::Update(GLfloat rotx) {
-	for (Planet* p : nPlanets) {
-		Position pos;
-		pos.setAngle(rotx, glm::vec3(1.f, 0.f, 0.f));
-		p->GetObject()->GetPosition().setAngle(rotx, glm::vec3(1.f, 0.f, 0.f));
+	if (run) {
+		stepper_type().do_step(make_pair(solar_system_coor(masses), solar_system_momentum(masses)),
+			make_pair(boost::ref(q), boost::ref(p)), t, dt);
+			t += dt;
+
+		int i = 0;
+		for (Planet* p : nPlanets) {
+			Position pos;
+			pos.setAngle(rotx, glm::vec3(1.f, 0.f, 0.f));
+			p->GetObject()->GetPosition().setAngle(rotx, glm::vec3(1.f, 0.f, 0.f));
+			p->GetObject()->GetPosition().setPosition(q[i].getVector());
+			i++;
+		}
+
+		/*qDebug() << t;
+		for (size_t i = 0; i < q.size(); ++i) {
+			qDebug() << "\n"; qDebug() << q[i].getVector().x;
+			qDebug() << q[i].getVector().y;
+			qDebug() << q[i].getVector().z;
+			qDebug() << "\n";
+		}*/
+
 	}
 }
 

@@ -12,7 +12,6 @@ AddDialog::AddDialog(QWidget *parent) :QDialog(parent) {
 		resize(width, height);
 	}
 	
-
 	setupGUI();
 	setWindowTitle(tr("Dodaj planete/slonce"));
 	setModal(true);
@@ -105,17 +104,17 @@ void AddDialog::setupGUI() {
 
 
 	/***********Debug***********/
-	nameEdit->setText("Mars");
-	radiusEdit->setText("0.8");
+	nameEdit->setText("Neptun");
+	radiusEdit->setText("1.0");
 
-	massEdit->setText("5");
-	xPositionEdit->setText("0");
-	yPositionEdit->setText("1.5");
-	zPositionEdit->setText("2");
+	massEdit->setText("0.0000517759138449");
+	xPositionEdit->setText("11.4707666");
+	yPositionEdit->setText("-25.7294829");
+	zPositionEdit->setText("-10.8169456");
 
-	xVelocityEdit->setText("0.8");
-	yVelocityEdit->setText("0.125");
-	zVelocityEdit->setText("1.0");
+	xVelocityEdit->setText("0.00288930");
+	yVelocityEdit->setText("0.00114527");
+	zVelocityEdit->setText("0.00039677");
 
 
 	setLayout(mainLayout);

@@ -4,7 +4,10 @@
 
 #include <boost/operators.hpp>
 #include <ostream>
-
+// Include GLM
+#include <glm\glm.hpp>
+#include <glm\gtc\matrix_transform.hpp>
+#include <glm\gtc\type_ptr.hpp>
 
 //[ point_type
 /*the point type */
@@ -39,6 +42,13 @@ public:
 		if (dim > 0) m_val[0] = x;
 		if (dim > 1) m_val[1] = y;
 		if (dim > 2) m_val[2] = z;
+	}
+
+	point(glm::dvec3 v)
+	{
+		if (dim > 0) m_val[0] = v.x;
+		if (dim > 1) m_val[1] = v.y;
+		if (dim > 2) m_val[2] = v.z;
 	}
 	//->
 
@@ -88,6 +98,12 @@ public:
 		for (size_t i = 0; i<dim; ++i)
 			m_val[i] /= val;
 		return *this;
+	}
+
+	//vec3
+
+	glm::dvec3 getVector() {
+		return glm::dvec3(m_val[0], m_val[1], m_val[2]);
 	}
 
 	//->
@@ -149,6 +165,9 @@ T abs(const point< T, Dim > &p1)
 
 
 
+
+
+
 //
 // output operator
 //
@@ -167,6 +186,10 @@ QDebug operator<<(QDebug out, const point< T, Dim > &p)
 	for (size_t i = 1; i<Dim; ++i) out << " " << p[i];
 	return out;
 }
+
+
+
+
 
 
 

@@ -63,16 +63,32 @@ private:
 	Shader* sunShader;
 	//Shader planet
 	Shader* planetShader;
-
+	//Symulacja
+	bool run = false;
+	//obliczenia
+	bool init = false;
 
 
 	//Boost odeint
-	size_t n = 6;
+	//size_t n = 2;
 	
 	typedef point<double, 3> point_type;
-	typedef boost::array< point_type, 6> container_type;
-	typedef boost::array<double, 6> mass_type;
+	typedef std::vector< point_type> container_type;
+	typedef std::vector<double> mass_type;
 	typedef symplectic_rkn_sb3a_mclachlan< container_type > stepper_type;
+
+
+	mass_type masses;
+
+	container_type q;
+	container_type p;
+
+	point_type qmean;
+	point_type pmean;
+
+
+	const double dt = 100.0;
+	double t = 0.0;
 
 public:
 	SolarSystem();
@@ -90,11 +106,15 @@ public:
 	//usuniecie planety ze sceny
 	void deletePlanet(int index);
 	// Utworzenie nowej planety
-	void createPlanet(QString name, double radius, double mass, glm::vec3 position, glm::vec3 velocity, SolarSystem::TextureFile texture);
+	void createPlanet(QString name, double radius, double mass, glm::dvec3 position, glm::dvec3 velocity, SolarSystem::TextureFile texture);
 	//Rusowanie sceny
 	void drawPlanet(Camera& camera);
 	//update sceny
 	void Update(GLfloat rotx);
+	//rozpoczecie symulacji
+	void start();
+	//reset symulacji
+	void reset();
 
 
 	//boost
@@ -105,13 +125,15 @@ public:
 
 		void operator()(const container_type &p, container_type &dqdt) const
 		{
-			for (size_t i = 0; i<6; ++i)
+			size_t n = p.size();
+			for (size_t i = 0; i<n; ++i)
 				dqdt[i] = p[i] / m_masses[i];
 		}
 
 	};
 
 
+	// [momentum_function
 	struct solar_system_momentum
 	{
 		const mass_type &m_masses;
@@ -136,6 +158,7 @@ public:
 			}
 		}
 	};
+	//]
 
 
 	//[ streaming_observer

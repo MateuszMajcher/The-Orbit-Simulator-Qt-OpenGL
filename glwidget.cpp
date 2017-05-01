@@ -91,22 +91,36 @@ void GLWidget::createPlanet(QString& name, double radius, double mass, glm::vec3
 void GLWidget::createSolarSystem() {
 	QString name;
 	double radius, mass;
-	name = "sun", radius = 1; mass = 10;
+	//dodanie slonca
+	name = "sun", radius = 2; mass = 1.00000597682;
 	mainScene->createPlanet(name, radius, mass, glm::dvec3(0, 0, 0), glm::dvec3(0, 0, 0), SolarSystem::SUN);
 	emit updateTable(name, radius, mass);
 
-	name = "Mars", radius = 1; mass = 10;
-	mainScene->createPlanet(name, radius, mass, glm::dvec3(-3.00124, 3.96274, 1.77152), glm::dvec3(0, 0, 0), SolarSystem::MARS);
+	name = "Jowisz", radius = 1; mass = 0.000954786104043;
+	mainScene->createPlanet(name, radius, mass, glm::dvec3(-3.5023653, -3.8169847, -1.5507963), glm::dvec3(0.00565429, -0.00412490, -0.00190589), SolarSystem::MARS);
 	emit updateTable(name, radius, mass);
+
+	name = "Saturn", radius = 1.8; mass = 0.000285583733151;
+	mainScene->createPlanet(name, radius, mass, glm::dvec3(9.0755314, -3.0458353, -1.6483708), glm::dvec3(0.00168318, 0.00483525, 0.00192462), SolarSystem::MARS);
+	emit updateTable(name, radius, mass);
+
+	name = "Uran", radius = 1.4; mass = 0.0000437273164546;
+	mainScene->createPlanet(name, radius, mass, glm::dvec3(8.3101420, -16.2901086, -7.2521278), glm::dvec3(0.00354178, 0.00137102, 0.00055029), SolarSystem::MARS);
+	emit updateTable(name, radius, mass);
+
+
 	
 	
 }
 
 
-
 void GLWidget::deletePlanet(int idx) {
 	mainScene->deletePlanet(idx);
 	qDebug() << "usunieto planet nr: " << idx;
+}
+
+void GLWidget::setSpeed(int speed) {
+	qDebug() << "Speed " << speed;
 }
 
 
@@ -150,6 +164,10 @@ void GLWidget::updaterot() {
 	update();
 }
 
+void GLWidget::start() {
+	qDebug() << "Start";
+	mainScene->start();
+}
 
 void GLWidget::initializeGL()
 {
@@ -278,6 +296,7 @@ void GLWidget::wheelEvent(QWheelEvent* e) {
 }
 
 void GLWidget::keyPressEvent(QKeyEvent* e) {
+
 	keys[e->key()] = true;
 }
 
