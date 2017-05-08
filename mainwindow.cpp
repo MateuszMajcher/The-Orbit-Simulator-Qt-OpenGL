@@ -36,32 +36,32 @@ void MainWindow::createActions() {
 	QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
 	QToolBar *fileToolBar = addToolBar(tr("File"));
 
-	const QIcon runIcon = QIcon::fromTheme("Run", QIcon(":/images/run.png"));
-	QAction *runAct = new QAction(runIcon, tr("Start symulacji"), this);
-	runAct->setShortcuts(QKeySequence::Refresh);
+	const QIcon runIcon = QIcon::fromTheme("Run", QIcon(":/images/play.png"));
+	const QIcon pauseIcon = QIcon::fromTheme("Stop", QIcon(":/images/pause.png"));
+	runAct = new QAction(runIcon, tr("Start symulacji"), this);
+	pauseAct = new QAction(pauseIcon, tr("Zatrzymanie symulacji"), this);
+
 	runAct->setStatusTip(tr("Start symulacji"));
-	connect(runAct, &QAction::triggered, glWidget, &GLWidget::start);
-	fileMenu->addAction(runAct);
-	fileToolBar->addAction(runAct);
+	pauseAct->setStatusTip(tr("Zatrzymanie symulacji"));
+	
+
+	startButton = new QToolButton;
+	startButton->setDefaultAction(runAct);
+	fileToolBar->addWidget(startButton);
+
+	connect(runAct, &QAction::triggered, this, &MainWindow::startSimulation);
+	connect(pauseAct, &QAction::triggered, this, &MainWindow::stopSimulation);
+	
 
 
 	const QIcon addIcon = QIcon::fromTheme("Add", QIcon(":/images/add.png"));
 	QAction *addAct = new QAction(addIcon, tr("Dodaj planete"), this);
 	addAct->setShortcuts(QKeySequence::New);
 	addAct->setStatusTip(tr("Dodanie planety"));
+	
 	connect(addAct, &QAction::triggered, this, &MainWindow::addPlanet);
 	fileMenu->addAction(addAct);
 	fileToolBar->addAction(addAct);
-
-
-	const QIcon saveIcon = QIcon::fromTheme("document-save", QIcon(":/images/save.png"));
-	QAction *saveAct = new QAction(saveIcon, tr("&Save..."), this);
-	saveAct->setShortcuts(QKeySequence::Save);
-	saveAct->setStatusTip(tr("Save the current form letter"));
-	//connect(saveAct, &QAction::triggered, this, &MainWindow::save);
-	fileMenu->addAction(saveAct);
-	fileToolBar->addAction(saveAct);
-
 
 
 	fileMenu->addSeparator();
@@ -83,10 +83,10 @@ void MainWindow::createActions() {
 
 	QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
 
-	QAction *aboutAct = helpMenu->addAction(tr("&About"), this, &MainWindow::about);
-	aboutAct->setStatusTip(tr("Show the application's About box"));
+	QAction *aboutAct = helpMenu->addAction(tr("&O aplikacji"), this, &MainWindow::about);
+	aboutAct->setStatusTip(tr("Opis aplikacji"));
 
-	QAction *aboutQtAct = helpMenu->addAction(tr("About &Qt"), qApp, &QApplication::aboutQt);
+	QAction *aboutQtAct = helpMenu->addAction(tr("Wersja &Qt"), qApp, &QApplication::aboutQt);
 	aboutQtAct->setStatusTip(tr("Show the Qt library's About box"));
 }
 
@@ -141,7 +141,7 @@ void MainWindow::createDock() {
 	slider->setTickPosition(QSlider::TicksBothSides);
 	slider->setTickInterval(1);
 	slider->setSingleStep(1);
-	slider->setValue(50);
+	slider->setValue(100);
 
 	//button dodania planety
 	QPushButton* createPlanet_button = new QPushButton("Dodaj planete", this);
@@ -196,7 +196,7 @@ void MainWindow::addPlanet() {
 	
 	
 }
-
+/*Uaktualnienie tabeli*/
 void MainWindow::updateTable(QString name, double radius, double mass) {
 	planetList->insertRow(planetList->rowCount());
 	planetList->setItem(planetList->rowCount() - 1, 0, new QTableWidgetItem(name));
@@ -204,6 +204,16 @@ void MainWindow::updateTable(QString name, double radius, double mass) {
 	planetList->setItem(planetList->rowCount() - 1, 2, new QTableWidgetItem(QString::number(mass)));
 }
 
+void MainWindow::startSimulation() {
+	if (glWidget->start())
+		startButton->setDefaultAction(pauseAct);
+
+}
+
+void MainWindow::stopSimulation() {
+	glWidget->stop();
+	startButton->setDefaultAction(runAct);
+}
 
 void MainWindow::addSun() {
 	qDebug() << "dodano slonce";

@@ -87,7 +87,7 @@ private:
 	point_type pmean;
 
 
-	const double dt = 100.0;
+	double dt = 100.0;
 	double t = 0.0;
 
 public:
@@ -113,9 +113,14 @@ public:
 	void Update(GLfloat rotx);
 	//rozpoczecie symulacji
 	void start();
+	//zatrzymanie symulacji
+	void stop();
 	//reset symulacji
 	void reset();
-
+	//ustawienie czasu symulacji
+	void setTime(double time);
+	//Ilosc planet w symulacji
+	int getNumberOfPlanets();
 
 	//boost
 	struct solar_system_coor {

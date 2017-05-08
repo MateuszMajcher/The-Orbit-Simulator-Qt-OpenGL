@@ -7,7 +7,12 @@ void remove(std::list<T>& vec, size_t pos) {
 	vec.erase(it);
 }
 
-
+template <typename T>
+void remove(T& vec, size_t pos) {
+	typename T::iterator it = vec.begin();
+	std::advance(it, pos);
+	vec.erase(it);
+}
 
 
 SolarSystem::SolarSystem() 
@@ -40,6 +45,21 @@ void SolarSystem::addPlanet(Planet* planet) {
 void SolarSystem::deletePlanet(int index) {
 	qDebug() << "Delete planet index " << index;
 	remove(nPlanets, index);
+	remove(masses, index);
+	remove(q, index);
+	remove(p, index);
+	for (Planet* planet : nPlanets) {
+		qDebug() << planet->getName();
+	}
+
+	for (double m : masses) {
+		qDebug() << m;
+	}
+
+	for (point_type m : q) {
+		qDebug() << m;
+	}
+
 	qDebug() <<"Liczba planet" << nPlanets.size();
 }
 
@@ -47,6 +67,7 @@ void SolarSystem::createPlanet(QString name, double radius, double mass, glm::dv
 	Planet* Sun = new Planet(name, 10E10, glm::dvec3(0, 0, 0), 5, 1, 512, sunShader, ToStringTexture(texture));
 	Sun->GetObject()->GetPosition().setPosition(position);
 	Sun->GetObject()->GetPosition().SetScale(glm::dvec3(radius, radius, radius));
+	qDebug() << "masa:";
 	masses.push_back(mass);
 	p.push_back(point_type(velocity));
 	q.push_back(point_type(position));
@@ -55,46 +76,56 @@ void SolarSystem::createPlanet(QString name, double radius, double mass, glm::dv
 	qDebug() << "pozycja: " << q[masses.size() - 1];
 	qDebug() << "velotiy: " << p[masses.size() - 1];
 
-	qmean = center_of_mass(q, masses);
-	pmean = center_of_mass(p, masses);
-	qDebug() << "Srednia q: " << qmean;
-	qDebug() << "Srednia p: " << pmean;
-
 	addPlanet(Sun);
 }
 
 void SolarSystem::start() {
 	qDebug() << "rozpoczecie symulacji";
 
-	if (!run) { 
-		run = true;
-		if (!init) {
-			init = true;
-			for (size_t i = 0; i < q.size(); ++i)
-			{
-				q[i] -= qmean;
-				p[i] -= pmean;
-				qDebug() << "srednia1: " << q[i];
-				qDebug() << "srednia2: " << p[i];
-			}
+	//run - czy calkowac
+	//init - czy inicialiowac stan zmiennych
 
-			for (size_t i = 0; i < q.size(); ++i) {
-				p[i] *= masses[i];
-				qDebug() << "masa: " << p[i] << endl;
-			}
+	run = true;
+	if (!init) {
+		init = true;
+
+		qmean = center_of_mass(q, masses);
+		pmean = center_of_mass(p, masses);
+		qDebug() << "Srednia q: " << qmean;
+		qDebug() << "Srednia p: " << pmean;
+
+		for (size_t i = 0; i < q.size(); ++i)
+		{
+			q[i] -= qmean;
+			p[i] -= pmean;
+			qDebug() << "srednia1: " << q[i];
+			qDebug() << "srednia2: " << p[i];
 		}
-	
-	}
 
-	else {
-		qDebug() << "zatrzymanie symulacji";
-		run = false;
+		for (size_t i = 0; i < q.size(); ++i) {
+			p[i] *= masses[i];
+			qDebug() << "masa: " << p[i] << endl;
+		}
 	}
 
 }
 
-void reset() {
+int SolarSystem::getNumberOfPlanets() {
+	return nPlanets.size();
+}
+
+void SolarSystem::stop() {
+	qDebug() << "zatrzymanie symulacji";
+	run = false;
+}
+
+void SolarSystem::reset() {
 	qDebug() << "reset";
+}
+
+void SolarSystem::setTime(double time) {
+	dt = time;
+	qDebug() << "Speed " << dt;
 }
 
 void SolarSystem::Update(GLfloat rotx) {
@@ -112,13 +143,13 @@ void SolarSystem::Update(GLfloat rotx) {
 			i++;
 		}
 
-		/*qDebug() << t;
+		qDebug() << t;
 		for (size_t i = 0; i < q.size(); ++i) {
 			qDebug() << "\n"; qDebug() << q[i].getVector().x;
 			qDebug() << q[i].getVector().y;
 			qDebug() << q[i].getVector().z;
 			qDebug() << "\n";
-		}*/
+		}
 
 	}
 }

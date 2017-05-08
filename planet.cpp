@@ -15,6 +15,9 @@ Planet::~Planet() {
 	delete m_object;
 }
 
+QString Planet::getName() {
+	return m_name;
+}
 
 void Planet::draw(Camera& camera) {
 	glCullFace(GL_BACK);      // pomija rysowanie œcian odwróconych ty³em

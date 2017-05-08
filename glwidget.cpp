@@ -108,6 +108,10 @@ void GLWidget::createSolarSystem() {
 	mainScene->createPlanet(name, radius, mass, glm::dvec3(8.3101420, -16.2901086, -7.2521278), glm::dvec3(0.00354178, 0.00137102, 0.00055029), SolarSystem::MARS);
 	emit updateTable(name, radius, mass);
 
+	name = "Neptun", radius = 1.8; mass = 0.0000517759138449;
+	mainScene->createPlanet(name, radius, mass, glm::dvec3(11.4707666, -25.7294829, -10.8169456), glm::dvec3(0.00288930, 0.00114527, 0.00039677), SolarSystem::MARS);
+	emit updateTable(name, radius, mass);
+
 
 	
 	
@@ -120,7 +124,7 @@ void GLWidget::deletePlanet(int idx) {
 }
 
 void GLWidget::setSpeed(int speed) {
-	qDebug() << "Speed " << speed;
+	mainScene->setTime(speed);
 }
 
 
@@ -164,9 +168,26 @@ void GLWidget::updaterot() {
 	update();
 }
 
-void GLWidget::start() {
+bool GLWidget::start() {
 	qDebug() << "Start";
-	mainScene->start();
+	qDebug() << mainScene->getNumberOfPlanets();
+	
+	if (mainScene->getNumberOfPlanets() >= 2) {
+		mainScene->start();
+		return true;
+	}
+	else {
+		int ret = QMessageBox::warning(this, tr("Nie mozna rozpoczac symulacji"),
+			tr("Dodaj co najmniej 2 planety.\n"),
+			QMessageBox::Ok);
+		return false;
+	}
+	
+}
+
+void GLWidget::stop() {
+	qDebug() << "Stop";
+	mainScene->stop();
 }
 
 void GLWidget::initializeGL()

@@ -104,17 +104,17 @@ void AddDialog::setupGUI() {
 
 
 	/***********Debug***********/
-	nameEdit->setText("Neptun");
-	radiusEdit->setText("1.0");
+	nameEdit->setText("Pluton");
+	radiusEdit->setText("0.2");
 
-	massEdit->setText("0.0000517759138449");
-	xPositionEdit->setText("11.4707666");
-	yPositionEdit->setText("-25.7294829");
-	zPositionEdit->setText("-10.8169456");
+	massEdit->setText("0.00000000769230");
+	xPositionEdit->setText("-15.5387357");
+	yPositionEdit->setText("-25.2225594");
+	zPositionEdit->setText("-3.1902382");
 
-	xVelocityEdit->setText("0.00288930");
-	yVelocityEdit->setText("0.00114527");
-	zVelocityEdit->setText("0.00039677");
+	xVelocityEdit->setText("0.00276725");
+	yVelocityEdit->setText("-0.00170702");
+	zVelocityEdit->setText("-0.00136504");
 
 
 	setLayout(mainLayout);

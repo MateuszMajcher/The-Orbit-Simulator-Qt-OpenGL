@@ -36,6 +36,8 @@ private slots:
 	void addSun();
 	void eraseItem();
 	void updateTable(QString, double, double);
+	void startSimulation();
+	void stopSimulation();
 signals:
 	void deletePlanet(int);
 
@@ -59,6 +61,11 @@ private:
 
 	QTableWidget *planetList;
 	QStringList  m_TableHeader;
+
+	QAction *runAct;
+	QAction *pauseAct;
+
+	QToolButton* startButton;
 
 };
 

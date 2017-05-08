@@ -17,6 +17,7 @@ class Planet {
 public:
 	Planet(QString name, double mass, glm::dvec3 velocity, double angularVelociy, double radius, double lightIntencity, Shader* shader, const QString& pathTexture);
 	~Planet();
+	QString getName();
 	void draw(Camera& camera);
 	inline void SetObject(Object* object) { m_object = object; m_object->getName() = m_name; }
 	Object* GetObject() { return m_object; }
