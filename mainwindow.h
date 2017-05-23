@@ -38,6 +38,7 @@ private slots:
 	void updateTable(QString, double, double);
 	void startSimulation();
 	void stopSimulation();
+	void reset();
 signals:
 	void deletePlanet(int);
 
@@ -64,6 +65,14 @@ private:
 
 	QAction *runAct;
 	QAction *pauseAct;
+	//dodanie planety
+	QAction *addAct; 
+	//button dodania planety
+	QPushButton* createPlanet_button;
+	//button usuniecia planety
+	QPushButton* deletePlanet_button;
+	//button resetu
+	QPushButton* Reset_button;
 
 	QToolButton* startButton;
 

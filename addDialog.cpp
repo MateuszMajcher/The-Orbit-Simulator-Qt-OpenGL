@@ -11,7 +11,16 @@ AddDialog::AddDialog(QWidget *parent) :QDialog(parent) {
 	else {
 		resize(width, height);
 	}
-	
+
+	//szablon
+	nameList = QList<std::string>() << "sun" << "jupiter" << "saturn" << "uranus" <<"neptune"<<"pluto";
+	radiusList = QList<double>() << 1.0 << 0.8 << 0.6<<0.4<<0.2<<0.5;
+	massList = QList<double>() << 1.00000597682 << 0.000954786104043<< 0.000285583733151<< 0.0000437273164546<< 0.0000517759138449<< 0.00000000769230;
+	posList = QList<glm::vec3>() << glm::vec3(0.0, 0.0, 0.0) << glm::vec3(-3.5023653, -3.8169847, -1.5507963) << glm::vec3(9.0755314, -3.0458353, -1.6483708) << glm::vec3(8.3101420, -16.2901086, -7.2521278) << glm::vec3(11.4707666, -25.7294829, -10.8169456) << glm::vec3(-15.5387357, -25.2225594, -3.1902382);
+	velList = QList<glm::vec3>() << glm::vec3(0.0, 0.0, 0.0) << glm::vec3(0.00565429, -0.00412490, -0.00190589) << glm::vec3(0.00168318, 0.00483525, 0.00192462) << glm::vec3(0.00354178, 0.00137102, 0.00055029) << glm::vec3(0.00288930, 0.00114527, 0.00039677) << glm::vec3(0.00276725, -0.00170702, -0.00136504);
+
+
+
 	setupGUI();
 	setWindowTitle(tr("Dodaj planete/slonce"));
 	setModal(true);
@@ -85,10 +94,15 @@ void AddDialog::setupGUI() {
 	velocityLayout->addWidget(zVelocityEdit, 2, 2, 1, 1);
 	velocityGroupBox->setLayout(velocityLayout);
 
+	comboBox = new QComboBox;
+	for (int i = 0; i < nameList.size(); ++i) 
+		comboBox->addItem(QString::fromStdString(nameList.at(i)));
+	connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setTemplate()));
 
 	mainLayout->addWidget(formGroupBox);
 	mainLayout->addWidget(positionGroupBox);
 	mainLayout->addWidget(velocityGroupBox);
+	mainLayout->addWidget(comboBox);
 	mainLayout->addWidget(buttons);
 
 
@@ -143,4 +157,23 @@ void AddDialog::slotAcceptData() {
 
 	emit acceptData(username, radius, mass, glm::vec3(xPosition, yPosition, zPosition), glm::vec3(xVelocity, yVelocity, zVelocity));
 	close();
+}
+
+void AddDialog::setTemplate() {
+	int index = comboBox->currentIndex();
+	QString text = comboBox->currentText();
+
+	nameEdit->setText(text);
+	radiusEdit->setText(QString::number(radiusList.at(index)));
+
+	massEdit->setText(QString::number(massList.at(index)));
+	xPositionEdit->setText(QString::number(posList.at(index).x));
+	yPositionEdit->setText(QString::number(posList.at(index).y));
+	zPositionEdit->setText(QString::number(posList.at(index).z));
+
+	xVelocityEdit->setText(QString::number(velList.at(index).x));
+	yVelocityEdit->setText(QString::number(velList.at(index).y));
+	zVelocityEdit->setText(QString::number(velList.at(index).z));
+
+	qDebug() << index << text << comboBox->itemData(index, Qt::DisplayRole);
 }

@@ -81,6 +81,7 @@ void SolarSystem::createPlanet(QString name, double radius, double mass, glm::dv
 
 void SolarSystem::start() {
 	qDebug() << "rozpoczecie symulacji";
+	qDebug() << init;
 
 	//run - czy calkowac
 	//init - czy inicialiowac stan zmiennych
@@ -121,6 +122,16 @@ void SolarSystem::stop() {
 
 void SolarSystem::reset() {
 	qDebug() << "reset";
+	nPlanets.clear();
+	masses.clear();
+	q.clear();
+	p.clear();
+	init = false;
+	t = 0;
+	qDebug() << "nPlanet size " <<nPlanets.size();
+	qDebug() << "masses size " << masses.size();
+	qDebug() << "q size " << q.size();
+	qDebug() << "p size " << p.size();
 }
 
 void SolarSystem::setTime(double time) {
@@ -137,8 +148,8 @@ void SolarSystem::Update(GLfloat rotx) {
 		int i = 0;
 		for (Planet* p : nPlanets) {
 			Position pos;
-			pos.setAngle(rotx, glm::vec3(1.f, 0.f, 0.f));
-			p->GetObject()->GetPosition().setAngle(rotx, glm::vec3(1.f, 0.f, 0.f));
+			//pos.setAngle(rotx, glm::vec3(1.f, 0.f, 0.f));
+			//p->GetObject()->GetPosition().setAngle(rotx, glm::vec3(1.f, 0.f, 0.f));
 			p->GetObject()->GetPosition().setPosition(q[i].getVector());
 			i++;
 		}
@@ -157,9 +168,15 @@ void SolarSystem::Update(GLfloat rotx) {
 QString SolarSystem::ToStringTexture(SolarSystem::TextureFile v) {
 	switch (v) {
 	case SUN: return "texture/texture_sun.jpg";
-	case EARTH: return "texture/texture_sun.jpg";
+	case EARTH: return "texture/texture_earth.jpg";
 	case MARS: return "texture/texture_mars.jpg";
-	default:  return "[Unknown OS_type]";
+	case JUPITER: return "texture/texture_jupiter.jpg";
+	case VENUS: return "texture/texture_venus.jpg";
+	case SATURN: return "texture/texture_saturn.jpg";
+	case PLUTO: return "texture/texture_pluto.jpg";
+	case NEPTUNE: return "texture/texture_neptune.jpg";
+	case URANUS: return "texture/texture_uranus.jpg";
+	default:  return "texture/metal.jpg";
 	};
 };
 

@@ -13,6 +13,7 @@
 #include <QFormLayout>
 #include <QRadioButton>
 #include <QDoubleValidator>
+#include <QComboBox>
 // Include GLM
 #include <glm\glm.hpp>
 #include <glm\gtc\matrix_transform.hpp>
@@ -35,9 +36,19 @@ private:
 	QLineEdit* zVelocityEdit;
 
 	QDialogButtonBox* buttons;
+	QComboBox* comboBox;
+
+	//dane
+	QList<std::string> nameList;
+	QList<double> radiusList;
+	QList<double> massList;
+	QList<glm::vec3> posList;
+	QList<glm::vec3> velList;
 
 	void setupGUI();
 	void setDoubleValidator(QLineEdit* edit, double min, double max);
+
+	
 
 public:
 	explicit AddDialog(QWidget *parent = 0);
@@ -46,6 +57,7 @@ signals:
 	void acceptData(QString& name, double radius, double mass, glm::vec3 position, glm::vec3 velocity);
 public slots:
 	void slotAcceptData();
+	void setTemplate();
 };
 
 #endif

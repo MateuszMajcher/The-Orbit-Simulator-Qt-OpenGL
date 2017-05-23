@@ -96,10 +96,18 @@ public:
 	 
 	enum TextureFile {
 			SUN,
+			MERCURY,
+			VENUS,
 			EARTH,
-			MARS
+			MARS,
+			JUPITER,
+			SATURN,
+			URANUS,
+			NEPTUNE,
+			PLUTO
 		};
 
+	//zwraca sciezke tekstury
 	QString ToStringTexture(SolarSystem::TextureFile v);
 	// Dodanie planety do sceny
 	void addPlanet(Planet* planet);

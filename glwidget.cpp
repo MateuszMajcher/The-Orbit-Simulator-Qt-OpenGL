@@ -6,11 +6,13 @@
 #include <QMessageBox>
 #include <ctime>
 #include "Solarsystem.h"
-// Camera
+
+
+// Camera init
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-GLfloat yaw = -90.0f;	// Yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right (due to how Eular angles work) so we initially rotate a bit to the left.
+GLfloat yaw = -90.0f;	
 GLfloat pitch = 0.0f;
 GLfloat lastX = WIDTH / 2.0;
 GLfloat lastY = HEIGHT / 2.0;
@@ -54,7 +56,7 @@ GLWidget::GLWidget(QWidget *parent)
 	: QOpenGLWidget(parent)
 	, m_program(0)
 	, m_geometry(0)
-	, camera(glm::vec3(0.0f, 0.0f, 3.0f))
+	, camera(glm::vec3(0.0f, 0.0f, 8.0f))
 {
 	setFocusPolicy(Qt::StrongFocus);
 	setFocus();
@@ -64,10 +66,12 @@ GLWidget::GLWidget(QWidget *parent)
 	QSurfaceFormat::setDefaultFormat(format);
 	this->setFormat(format);
 
+	//sygnal usuniecia planety
 	connect(parent,
 		SIGNAL(deletePlanet(int)),
 		this,
 		SLOT(deletePlanet(int)));
+
 
 	sh = new Shader(vertex, fragment);
 	texture = new Texture(sh);
@@ -77,7 +81,10 @@ GLWidget::GLWidget(QWidget *parent)
 	
 }
 
-
+/*
+Utworznie planety i dodanie do sceny
+Update tabeli
+*/
 void GLWidget::createPlanet(QString& name, double radius, double mass, glm::vec3 position, glm::vec3 velocity) {
 	qDebug() << "nazwa: " << name;
 	qDebug() << "radius: " << radius;
@@ -88,28 +95,31 @@ void GLWidget::createPlanet(QString& name, double radius, double mass, glm::vec3
 	emit updateTable(name, radius, mass);
 }
 
+/*
+Utworzenie ukladu slonecznego 
+*/
 void GLWidget::createSolarSystem() {
 	QString name;
 	double radius, mass;
-	//dodanie slonca
+
 	name = "sun", radius = 2; mass = 1.00000597682;
 	mainScene->createPlanet(name, radius, mass, glm::dvec3(0, 0, 0), glm::dvec3(0, 0, 0), SolarSystem::SUN);
 	emit updateTable(name, radius, mass);
 
 	name = "Jowisz", radius = 1; mass = 0.000954786104043;
-	mainScene->createPlanet(name, radius, mass, glm::dvec3(-3.5023653, -3.8169847, -1.5507963), glm::dvec3(0.00565429, -0.00412490, -0.00190589), SolarSystem::MARS);
+	mainScene->createPlanet(name, radius, mass, glm::dvec3(-3.5023653, -3.8169847, -1.5507963), glm::dvec3(0.00565429, -0.00412490, -0.00190589), SolarSystem::JUPITER);
 	emit updateTable(name, radius, mass);
 
 	name = "Saturn", radius = 1.8; mass = 0.000285583733151;
-	mainScene->createPlanet(name, radius, mass, glm::dvec3(9.0755314, -3.0458353, -1.6483708), glm::dvec3(0.00168318, 0.00483525, 0.00192462), SolarSystem::MARS);
+	mainScene->createPlanet(name, radius, mass, glm::dvec3(9.0755314, -3.0458353, -1.6483708), glm::dvec3(0.00168318, 0.00483525, 0.00192462), SolarSystem::SATURN);
 	emit updateTable(name, radius, mass);
 
 	name = "Uran", radius = 1.4; mass = 0.0000437273164546;
-	mainScene->createPlanet(name, radius, mass, glm::dvec3(8.3101420, -16.2901086, -7.2521278), glm::dvec3(0.00354178, 0.00137102, 0.00055029), SolarSystem::MARS);
+	mainScene->createPlanet(name, radius, mass, glm::dvec3(8.3101420, -16.2901086, -7.2521278), glm::dvec3(0.00354178, 0.00137102, 0.00055029), SolarSystem::URANUS);
 	emit updateTable(name, radius, mass);
 
 	name = "Neptun", radius = 1.8; mass = 0.0000517759138449;
-	mainScene->createPlanet(name, radius, mass, glm::dvec3(11.4707666, -25.7294829, -10.8169456), glm::dvec3(0.00288930, 0.00114527, 0.00039677), SolarSystem::MARS);
+	mainScene->createPlanet(name, radius, mass, glm::dvec3(11.4707666, -25.7294829, -10.8169456), glm::dvec3(0.00288930, 0.00114527, 0.00039677), SolarSystem::NEPTUNE);
 	emit updateTable(name, radius, mass);
 
 
@@ -117,12 +127,13 @@ void GLWidget::createSolarSystem() {
 	
 }
 
-
+//delete planety ze sceny
 void GLWidget::deletePlanet(int idx) {
 	mainScene->deletePlanet(idx);
 	qDebug() << "usunieto planet nr: " << idx;
 }
 
+//ustawienie predkosci symulacji
 void GLWidget::setSpeed(int speed) {
 	mainScene->setTime(speed);
 }
@@ -163,11 +174,8 @@ void GLWidget::cleanup()
 	doneCurrent();
 }
 
-void GLWidget::updaterot() {
-	rotx+=0.1;
-	update();
-}
 
+//Uruchomienie symulacji
 bool GLWidget::start() {
 	qDebug() << "Start";
 	qDebug() << mainScene->getNumberOfPlanets();
@@ -185,9 +193,16 @@ bool GLWidget::start() {
 	
 }
 
+//zatrzymanie symulacji
 void GLWidget::stop() {
 	qDebug() << "Stop";
 	mainScene->stop();
+}
+
+//zrestartowanie symulacji
+void GLWidget::reset() {
+	qDebug() << "Reset";
+	mainScene->reset();
 }
 
 void GLWidget::initializeGL()

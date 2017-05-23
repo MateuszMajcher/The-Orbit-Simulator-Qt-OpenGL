@@ -21,6 +21,7 @@
 MainWindow::MainWindow()
 	:glWidget(new GLWidget(this))
 {
+	setWindowTitle("Symulacja ukladu slonecznego");
     setCentralWidget(glWidget);
 	createActions();
 	createDock();
@@ -33,8 +34,8 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::createActions() {
-	QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
-	QToolBar *fileToolBar = addToolBar(tr("File"));
+	QMenu *fileMenu = menuBar()->addMenu(tr("&Akcje"));
+	QToolBar *fileToolBar = addToolBar(tr("Akcje"));
 
 	const QIcon runIcon = QIcon::fromTheme("Run", QIcon(":/images/play.png"));
 	const QIcon pauseIcon = QIcon::fromTheme("Stop", QIcon(":/images/pause.png"));
@@ -44,6 +45,9 @@ void MainWindow::createActions() {
 	runAct->setStatusTip(tr("Start symulacji"));
 	pauseAct->setStatusTip(tr("Zatrzymanie symulacji"));
 	
+
+	
+
 
 	startButton = new QToolButton;
 	startButton->setDefaultAction(runAct);
@@ -55,7 +59,7 @@ void MainWindow::createActions() {
 
 
 	const QIcon addIcon = QIcon::fromTheme("Add", QIcon(":/images/add.png"));
-	QAction *addAct = new QAction(addIcon, tr("Dodaj planete"), this);
+	addAct = new QAction(addIcon, tr("Dodaj planete"), this);
 	addAct->setShortcuts(QKeySequence::New);
 	addAct->setStatusTip(tr("Dodanie planety"));
 	
@@ -64,24 +68,17 @@ void MainWindow::createActions() {
 	fileToolBar->addAction(addAct);
 
 
+
 	fileMenu->addSeparator();
 
 	QAction *quitAct = fileMenu->addAction(tr("&Quit"), this, &QWidget::close);
 	quitAct->setShortcuts(QKeySequence::Quit);
 	quitAct->setStatusTip(tr("Quit the application"));
 
-	QMenu *editMenu = menuBar()->addMenu(tr("&Edit"));
-	QToolBar *editToolBar = addToolBar(tr("Edit"));
-	const QIcon undoIcon = QIcon::fromTheme("edit-undo", QIcon(":/images/undo.png"));
-	QAction *undoAct = new QAction(undoIcon, tr("&Undo"), this);
-	undoAct->setShortcuts(QKeySequence::Undo);
-	undoAct->setStatusTip(tr("Undo the last editing action"));
-	//connect(undoAct, &QAction::triggered, this, &MainWindow::undo);
-	editMenu->addAction(undoAct);
-	editToolBar->addAction(undoAct);
+	
 
 
-	QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
+	QMenu *helpMenu = menuBar()->addMenu(tr("&Pomoc"));
 
 	QAction *aboutAct = helpMenu->addAction(tr("&O aplikacji"), this, &MainWindow::about);
 	aboutAct->setStatusTip(tr("Opis aplikacji"));
@@ -91,7 +88,7 @@ void MainWindow::createActions() {
 }
 
 void MainWindow::about() {
-	QMessageBox::about(this, tr("Symulacja planet"), (""));
+	QMessageBox::about(this, tr("Symulacja planet"), ("Projekt \n Symulacja komputerowa\n Wykonal Mateusz Majcher"));
 }
 
 QSlider *MainWindow::createSlider() {
@@ -105,15 +102,15 @@ QSlider *MainWindow::createSlider() {
 }
 
 void MainWindow::createDock() {
-	QDockWidget *dock = new QDockWidget(tr("List Planet"), this);
+	QDockWidget *dock = new QDockWidget(tr("Lista planet"), this);
 	dock->setAllowedAreas(Qt::BottomDockWidgetArea);
 	dock->setMaximumWidth(400);
 	dock->setMaximumHeight(150);
 
 	planetList = new QTableWidget(0, 3, this);
-	QTableWidgetItem *nameHeader = new QTableWidgetItem(tr("Name"));
-	QTableWidgetItem *radiusHeader = new QTableWidgetItem(tr("Radius"));
-	QTableWidgetItem *massHeader = new QTableWidgetItem(tr("Mass"));
+	QTableWidgetItem *nameHeader = new QTableWidgetItem(tr("Nazwa"));
+	QTableWidgetItem *radiusHeader = new QTableWidgetItem(tr("Promien"));
+	QTableWidgetItem *massHeader = new QTableWidgetItem(tr("Masa"));
 	planetList->setHorizontalHeaderItem(0, nameHeader);
 	planetList->setHorizontalHeaderItem(1, radiusHeader);
 	planetList->setHorizontalHeaderItem(2, massHeader);
@@ -126,7 +123,7 @@ void MainWindow::createDock() {
 	addDockWidget(Qt::BottomDockWidgetArea, dock);
 	//viewMenu->addAction(dock->toggleViewAction());
 	/************************************************************************/
-	QDockWidget *simulationDock = new QDockWidget(tr("settings panel"), this);
+	QDockWidget *simulationDock = new QDockWidget(tr("Panel ustawien"), this);
 	simulationDock->setAllowedAreas(Qt::BottomDockWidgetArea);
 	settingsPanel = new QWidget(simulationDock);
 
@@ -134,27 +131,31 @@ void MainWindow::createDock() {
 	QGridLayout *layout = new QGridLayout();
 
 
-	//Sterowanie
+
 
 	//SLider predkosci
 	QSlider* slider = new QSlider(Qt::Orientation::Horizontal);
-	slider->setTickPosition(QSlider::TicksBothSides);
+	slider->setTickPosition(QSlider::TicksBelow);
 	slider->setTickInterval(1);
 	slider->setSingleStep(1);
 	slider->setValue(100);
 
+	QLabel* speedValue = new QLabel("Predkosc symulacji", this);
+
+
 	//button dodania planety
-	QPushButton* createPlanet_button = new QPushButton("Dodaj planete", this);
+	createPlanet_button = new QPushButton("Dodaj planete", this);
 	//button usuniecia planety
-	QPushButton* deletePlanet_button = new QPushButton("Usun", this);
+	deletePlanet_button = new QPushButton("Usun", this);
 	//button resetu
-	QPushButton* Reset_button = new QPushButton("Reset", this);
+	Reset_button = new QPushButton("Reset", this);
 
 	//dodanie widgetow do layaotu
 	layout->addWidget(createPlanet_button, 0, 0, 1, 1);
 	layout->addWidget(deletePlanet_button, 0, 1, 1, 1);
 	layout->addWidget(Reset_button, 0, 2, 1, 1);
-	layout->addWidget(slider, 1, 0, 1, 3);
+	layout->addWidget(speedValue, 1, 0, 1, 3);
+	layout->addWidget(slider, 1, 1, 1, 3);
 
 	//ustawienie layoautu
 	settingsPanel->setLayout(layout);
@@ -164,6 +165,7 @@ void MainWindow::createDock() {
 
 	connect(createPlanet_button, SIGNAL(clicked()), this, SLOT(addPlanet()));
 	connect(deletePlanet_button, SIGNAL(clicked()), this, SLOT(eraseItem()));
+	connect(Reset_button, SIGNAL(clicked()), this, SLOT(reset()));
 	connect(slider, SIGNAL(valueChanged(int)), glWidget, SLOT(setSpeed(int)));
 	connect(glWidget,
 		SIGNAL(updateTable(QString, double, double)),
@@ -205,14 +207,27 @@ void MainWindow::updateTable(QString name, double radius, double mass) {
 }
 
 void MainWindow::startSimulation() {
-	if (glWidget->start())
+	if (glWidget->start()) {
 		startButton->setDefaultAction(pauseAct);
-
+		addAct->setDisabled(true);
+		createPlanet_button->setDisabled(true);
+		deletePlanet_button->setDisabled(true);
+		Reset_button->setDisabled(true);
+	}
 }
 
 void MainWindow::stopSimulation() {
 	glWidget->stop();
 	startButton->setDefaultAction(runAct);
+	Reset_button->setDisabled(false);
+}
+
+void MainWindow::reset() {
+	glWidget->reset();
+	addAct->setDisabled(false);
+	createPlanet_button->setDisabled(false);
+	deletePlanet_button->setDisabled(false);
+	planetList->setRowCount(0);
 }
 
 void MainWindow::addSun() {

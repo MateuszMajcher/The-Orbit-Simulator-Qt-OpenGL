@@ -19,7 +19,6 @@
 #include "Camera.h"
 #include "Position.h"
 #include "planet.h"
-#include "Simulation.h"
 #include "Solarsystem.h"
 
 // Include GLM
@@ -48,12 +47,12 @@ public:
 
 	public slots:
 		void cleanup();
-		void updaterot();
 		void createPlanet(QString& name, double radius, double mass, glm::vec3 position, glm::vec3 velocity);
 		void deletePlanet(int);
 		void createSolarSystem();
 		bool start();
 		void stop();
+		void reset();
 		void setSpeed(int speed);
 signals:
 		void updateTable(QString, double, double); 
