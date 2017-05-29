@@ -1,4 +1,4 @@
-#include "glwidget.h"
+ï»¿#include "glwidget.h"
 #include <QMouseEvent>
 #include <QOpenGLShaderProgram>
 #include <QCoreApplication>
@@ -193,6 +193,12 @@ bool GLWidget::start() {
 	
 }
 
+void GLWidget::updaterot() {
+	rotx += 0.1;
+	
+	
+}
+
 //zatrzymanie symulacji
 void GLWidget::stop() {
 	qDebug() << "Stop";
@@ -219,7 +225,7 @@ void GLWidget::initializeGL()
 	sh->setup();
 
 	//utworzenie  vao
-	//Generowanie identyfikatorów obiektów tablic wierzcho³ków
+	//Generowanie identyfikatorÃ³w obiektÃ³w tablic wierzchoÅ‚kÃ³w
 	m_vao.create();
 	QOpenGLVertexArrayObject::Binder vaoBinder(&m_vao);
 
@@ -251,7 +257,7 @@ void GLWidget::paintGL()
 	Do_Movement();
 
 
-
+	update();
 	glm::mat4 model;
 	glm::mat4 view;
 	glm::mat4 projection;
@@ -269,12 +275,12 @@ void GLWidget::paintGL()
 	
 	//obj->SetPosition(pos);
 	planet->GetObject()->SetPosition(pos);
-	//narysowanie danych zawartych w tablicach wierzcho³ków dla obiektu
+	//narysowanie danych zawartych w tablicach wierzchoÅ‚kÃ³w dla obiektu
 	//planet->draw(camera);
 	mainScene->Update(rotx);
 	mainScene->drawPlanet(camera);
 
-	// wy³¹czenie shadera
+	// wyÅ‚Ä…czenie shadera
 	sh->getProgram()->release();
 }
 
@@ -332,11 +338,12 @@ void GLWidget::wheelEvent(QWheelEvent* e) {
 }
 
 void GLWidget::keyPressEvent(QKeyEvent* e) {
-
-	keys[e->key()] = true;
+	if (e->key() < 1024)
+		keys[e->key()] = true;
 }
 
 
 void GLWidget::keyReleaseEvent(QKeyEvent* e) {
-	keys[e->key()] = false;
+	if (e->key() < 1024)
+		keys[e->key()] = false;
 }
