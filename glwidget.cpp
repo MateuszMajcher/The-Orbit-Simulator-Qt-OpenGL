@@ -91,7 +91,15 @@ void GLWidget::createPlanet(QString& name, double radius, double mass, glm::vec3
 	qDebug() << "masa: " << mass;
 	qDebug() << "pozycja: " << position.x<<position.y<<position.z;
 	qDebug() << "ped: " << velocity.x << velocity.y << velocity.z;
-	mainScene->createPlanet(name, radius, mass, position, velocity, SolarSystem::SUN);
+	
+	SolarSystem::TextureFile texture;
+	if (mainScene->getNumberOfPlanets() == 0) {
+		texture = SolarSystem::SUN;
+	}
+	else {
+		texture = SolarSystem::OTHER;
+	}
+	mainScene->createPlanet(name, radius, mass, position, velocity, texture);
 	emit updateTable(name, radius, mass);
 }
 

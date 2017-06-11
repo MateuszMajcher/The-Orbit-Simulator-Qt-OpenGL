@@ -104,7 +104,8 @@ public:
 			SATURN,
 			URANUS,
 			NEPTUNE,
-			PLUTO
+			PLUTO,
+			OTHER
 		};
 
 	//zwraca sciezke tekstury

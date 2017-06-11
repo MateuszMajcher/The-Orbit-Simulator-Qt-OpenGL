@@ -176,7 +176,8 @@ QString SolarSystem::ToStringTexture(SolarSystem::TextureFile v) {
 	case PLUTO: return "texture/texture_pluto.jpg";
 	case NEPTUNE: return "texture/texture_neptune.jpg";
 	case URANUS: return "texture/texture_uranus.jpg";
-	default:  return "texture/metal.jpg";
+	case OTHER: return "texture/metal.png";
+	default:  return "texture/metal.png";
 	};
 };
 
